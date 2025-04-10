@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -13,15 +14,39 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'utilisateur';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        /* 'name', */
         'email',
         'password',
+        'roles',
     ];
+
+    /**
+     * Get shelter informations
+     */
+    public function refuge(): BelongsTo
+      {
+        return $this->belongsTo(Association::class);
+      }
+
+    /**
+     * Get foster family informations
+     */
+    public function accueillant(): BelongsTo
+      {
+        return $this->belongsTo(Famille::class);
+      }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -30,7 +55,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token',
+        /* 'remember_token', */
     ];
 
     /**
@@ -41,8 +66,15 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
+            /* 'email_verified_at' => 'datetime', */
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
 }
