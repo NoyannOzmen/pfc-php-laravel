@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Demande extends Model
 {
@@ -23,6 +25,22 @@ class Demande extends Model
         'date_debut',
         'date_fin',
     ];
+
+        /**
+     * Get animal informations
+     */
+    public function animal_accueillable(): BelongsTo
+      {
+        return $this->belongsTo(Animal::class, 'animal_id');
+      }
+
+    /**
+     * Get foster family informations
+     */
+    public function potentiel_accueillant(): BelongsTo
+      {
+        return $this->belongsTo(Famille::class, 'famille_id');
+      }
 
     /**
      * Indicates if the model should be timestamped.

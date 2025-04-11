@@ -1,6 +1,5 @@
-{% extends "base.html.twig" %}
-
-{% block body %}
+@extends('layouts.app')
+@section('content')
 <main class="justify-self-stretch flex-1">
 	<div class="my-12 flex items-center justify-center">
 		<img src="/images/404.webp" class="" alt="Un lion navré">
@@ -15,4 +14,4 @@
 		</a>
 	</div>
 </main>
-{% endblock %}
+@endsection

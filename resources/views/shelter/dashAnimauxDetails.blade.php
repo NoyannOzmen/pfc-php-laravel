@@ -1,12 +1,10 @@
-{% extends "base.html.twig" %}
-
-{% block body %}
+@extends('layouts.app')
+@section('content')
 <main class="justify-self-stretch flex-1">
   <h2 class="font-grands text-3xl text-center my-2 pt-5">Mon espace association</h2>
-  
-  {# Conteneur général qui contient tout le dashboard #}
+
   <div class="flex flex-col content-center justify-center mx-auto mb-4 w-[80%]">
-    
+
     <nav class="flex flex-wrap justify-center md:justify-start">
       <ul class="flex flex-wrap-reverse gap-x-2 mx-3 justify-center font-semibold md:justify-start md:ml-10 text-xl">
         <li><a href="/association/profil" tabindex="0"><button id="dashbtn-1" class="dashbtn" tabindex="-1">Profil</button></a></li>
@@ -15,10 +13,9 @@
       </ul>
       <div class="mx-2 grow w-[90%] h-2 bg-accents1-dark rounded-t-lg"></div>
     </nav>
-    
-    {# Conteneur du sous menu et de la section #}
+
     <div class="flex flex-col bg-zoning rounded-lg">
-      
+
       <nav class="rounded-lg">
         <ul class="rounded-t-lg flex bg-accents2 justify-stretch font-semibold text-fond text-sm md:justify-start md:pl-8">
           <li class="dashsubbtn-active rounded-tl-lg block grow text-center pl-2 border-r-2 border-r-zoning py-2 hover:underline md:grow-0 md:px-4 md:rounded-none md:border-l-2 md:border-l-zoning bor"><a href="/association/profil/animaux">Nos animaux</a></li>
@@ -26,66 +23,67 @@
           <li class="block grow text-center pr-2 py-2 rounded-tr-lg hover:underline md:grow-0 md:px-4 md:rounded-none md:border-r-solid md:border-r-2 md:border-r-zoning"><a href="/association/profil/animaux/nouveau-profil">Créer un profil</a></li>
         </ul>
       </nav>
-      
-      <section id="dahboard-container" class="flex justify-center flex-wrap gap-x-6 gap-y-4 p-6">       
-        
-       {# ANIMAL INFO #}
+
+      <section id="dahboard-container" class="flex justify-center flex-wrap gap-x-6 gap-y-4 p-6">
+
+       <!-- ANIMAL INFO -->
         <div class="w-60 md:w-auto">
           <h3 class="hidden md:inline font-grands text-3xl text-center my-2 pt-5 w-full">Fiche de suivi d'un animal</h3>
-          
+
           <div class="flex p-6 pb-4">
             <div class="flex flex-col gap-2">
-              {% if animal.images_animal is empty %}
+              @if (empty($animal->images_animal))
                 <img class="w-28 rounded-lg" src="/images/animal_empty.webp" alt="Photo à venir">
-              {% else %}
-                <img class="w-28 rounded-lg" src="{{ animal.images_animal[0].url }}" alt="Photo de {{ animal.nom }}">
-              {% endif %}
+              @else
+                <img class="w-28 rounded-lg" src="{{ $animal->images_animal[0]->url }}" alt="Photo de {{ $animal->nom }}">
+              @endif
             </div>
-                
+
             <div class="pl-4">
               <p class="text-base italic leading-3">Nom</p>
-              <p class="text-base font-semibold">{{ animal.nom }}</p>
+              <p class="text-base font-semibold">{{ $animal->nom }}</p>
             </div>
           </div>
-          
+
           <div class="grid grid-cols-2 px-6 gap-y-2">
-            
+
             <div>
               <p class="text-sm italic leading-3">Age</p>
-              <p class="text-base font-semibold">{{ animal.age }}&nbsp;ans</p>
+              <p class="text-base font-semibold">{{ $animal->age }}&nbsp;ans</p>
             </div>
-            
+
             <div>
               <p class="text-sm italic leading-3">Sexe</p>
-              <p class="text-base font-semibold">{{ animal.sexe }}</p>
+              <p class="text-base font-semibold">{{ $animal->sexe }}</p>
             </div>
-            
+
             <div class="">
               <p class="text-sm italic leading-3">Espèce</p>
-              <p class="text-base font-semibold">{{ animal.espece.nom }}</p>
+              <p class="text-base font-semibold">{{ $animal->espece->nom }}</p>
             </div>
-            
-            {% if animal.race %}
+
+            @if ($animal->race)
               <div>
                 <p class="text-sm italic leading-3">Race</p>
-                <p class="text-base font-semibold">{{ animal.race }}</p>
+                <p class="text-base font-semibold">{{ $animal->race }}</p>
               </div>
-            {% endif %}
+            @endif
           </div>
-            
-          {% if animal.tags %}
+
+          @if ($animal->tags)
             <div class="flex flex-wrap mt-4 px-6 gap-1">
-              {% for tag in animal.tags %}
+              @foreach ($animal->tags as $tag)
                 <p class="group rounded-full block bg-accents1 text-fond text-center text-xs font-semibold py-1 px-2">
-                  {{ tag.tags.nom }}
+                  {{ tag->nom }}
                   <span class="group-hover:block hidden z-10 bg-accents2-dark text-fond absolute px-2 py-2 text-xs rounded-b-xl rounded-tr-xl">
-                    {{ tag.tags.description }}
+                    {{ tag->description }}
                   </span>
                 </p>
-                {% endfor %}
+                @endforeach
             </div>
-          {% endif %}
+          @endif
 
+          <!--
           <div class="font-body mx-auto w-[80%] bg-zoning rounded-lg shadow dark:bg-gray-800 my-4">
             {{ form_start(form) }}
               <div class="flex flex-col mx-auto">
@@ -97,73 +95,75 @@
                 </div>
               </div>
             {{ form_end(form) }}
-          </div>   
+          </div> -->
         </div>
-              
-        {# ACCUEILLANT INFOS#}
-        {% if animal.famille %}
+
+        <!-- ACCUEILLANT INFOS-->
+        @if ($animal->famille)
           <div class="w-60 md:w-auto">
             <h3 class="font-body font-bold mb-4">Famille d'accueil</h3>
-            
+
             <div class="px-6 mb-3 md:grid-cols-2 md:grid md:max-w-96">
               <div class="mb-2 mt-2">
                 <p class="text-sm italic leading-3">Nom</p>
-                <p class="text-sm font-semibold">{{ animal.famille.nom }}</p>
+                <p class="text-sm font-semibold">{{ $animal->famille->nom }}</p>
               </div>
               <div class="mb-2">
                 <p class="text-sm italic leading-3">Téléphone</p>
-                <p class="text-sm font-semibold">{{ animal.famille.telephone }}</p>
+                <p class="text-sm font-semibold">{{ $animal->famille->telephone }}</p>
               </div>
-              {# 
+              <!--
               <div class="mb-2">
                 <p class="text-sm italic leading-3">e-mail</p>
-                <p class="text-sm font-semibold">{{ animal.famille.utilisateur.email }}</p>
-              </div> 
-              #}
+                <p class="text-sm font-semibold">{{ $animal->famille->utilisateur->email }}</p>
+              </div>
+              -->
               <div class="mb-2">
                 <p class="text-sm italic leading-4">Adresse</p>
-                <p class="text-sm font-semibold leading-3">{{ animal.famille.rue }}</p>
-                <p class="text-sm font-semibold ">{{ animal.famille.code_postal }}&nbsp;{{ animal.famille.commune  }}</p>
+                <p class="text-sm font-semibold leading-3">{{ $animal->famille->rue }}</p>
+                <p class="text-sm font-semibold ">{{ $animal->famille->code_postal }}&nbsp;{{ $animal->famille->commune  }}</p>
               </div>
               <div class="mb-2">
                 <p class="text-sm italic leading-3">Pays</p>
-                <p class="text-sm font-semibold">{{ animal.famille.pays }}</p>
+                <p class="text-sm font-semibold">{{ $animal->famille->pays }}</p>
               </div>
               <div>
                 <p class="text-sm italic leading-3">Hébergement</p>
-                <p class="text-sm font-semibold">{{ animal.famille.hebergement }}</p>
+                <p class="text-sm font-semibold">{{ $animal->famille->hebergement }}</p>
               </div>
             </div>
           </div>
-        {% endif %}
-                
-        {# HISTORIQUE DES DEMANDES -->  #}
-        {% if demandes %}  
+        @endif
+
+        <!-- HISTORIQUE DES DEMANDES -->
+        @if (count($demandes) > 0)
             <div class="px-4 ">
               <h3 class="font-body font-bold mb-4">Historique des demandes d'accueil</h3>
-              
-              <table class="mb-3 rounded-b-lg rounded-lg border-separate "> 
+
+              <table class="mb-3 rounded-b-lg rounded-lg border-separate ">
                 <thead class=" text-fond text-sm  bg-accents2-dark font-grands font-semibold p-3 border-accents2-dark border-solid border-1">
                   <th class="px-2 pt-2  border-accents2-light border-solid border-1 text-center">Famille</th>
                   <th class="px-2 pt-2  border-accents2-light border-solid border-1 text-center">Date de demande</th>
                   <th class="px-2 pt-2  border-accents2-light border-solid border-1 text-center">Statut</th>
                 </thead>
                 <tbody class="rounded-lg border-separate ">
-                  {% for demande in demandes %}
+                  @foreach ($demandes as $demande)
                     <tr class="odd:bg-accents2-light even:bg-fond odd:text-fond text-sm font-body font-semibold p-4 rounded-lg ">
-                      <td class="text-center p-2 rounded-lg ">{{ demande.potentiel_accueillant.nom }}</td>
-                      <td class="text-center p-2 rounded-lg ">{{ demande.date_debut }}</td>
-                      <td class="text-center p-2 rounded-lg hover:underline"><a href="{{ path('shelter_request_details', {'requestId': demande.id }) }}">{{ demande.statut_demande }}</a></td>
+                      <td class="text-center p-2 rounded-lg ">{{ $demande->potentiel_accueillant->nom }}</td>
+                      <td class="text-center p-2 rounded-lg ">{{ $demande->date_debut }}</td>
+                      <td class="text-center p-2 rounded-lg hover:underline"><a href="/association/profil/demandes/{{ $demande->id }}">{{ $demande->statut_demande }}</a></td>
                     </tr>
-                  {% endfor %}
+                  @endforeach
                 </tbody>
               </table>
-            </div>    
-        {% endif %}
-      </section>             
+            </div>
+        @endif
+      </section>
     </div>
   </div>
 </main>
+@endsection
 
-<script src="{{ asset('js/dashboardAssoListeAnimal.js') }}"></script>
-{% endblock %}
+@push('scripts')
+<script src="{{ asset('js/dashboardAssoListe$Animal->js') }}"></script>
+@endpush

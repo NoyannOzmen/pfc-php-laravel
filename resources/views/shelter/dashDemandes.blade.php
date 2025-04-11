@@ -1,9 +1,8 @@
-{% extends "base.html.twig" %}
-
-{% block body %}
+@extends('layouts.app')
+@section('content')
 <main class="justify-self-stretch flex-1">
 	<h2 class="font-grands text-3xl text-center my-2 pt-5">Mon espace association</h2>
-  <div class="flex flex-col content-center justify-center mx-auto mb-4 w-[80%]"> 
+  <div class="flex flex-col content-center justify-center mx-auto mb-4 w-[80%]">
 
     <nav class="flex flex-wrap justify-center md:justify-start">
       <ul class="flex flex-wrap-reverse gap-x-2 mx-3 justify-center font-semibold md:justify-start md:ml-10 text-xl">
@@ -25,9 +24,9 @@
         <div class="container">
           <div class="row w-full text-center my-6">
             <div class="col w-full text-center my-6 flex justify-center flex-wrap">
-              {% if requestedAnimals is empty %}
+              @if (empty($requestedAnimals))
                 <h4 class="w-full text-center font-grands text-2xl my-4">Pas de demandes d'accueil en attente</h4>
-              {% else %}
+              @else
                 <h4 class="w-full text-center font-grands text-2xl my-4">Demandes en cours</h4>
                   <table class="table text-center w-full md:w-5/6">
 
@@ -35,13 +34,11 @@
                       <td colspan="3" scope="colgroup">Nom Animal</td>
                       <td colspan="3" scope="colgroup">Nombre de demandes</td>
                     </tr>
-                    {% for animal in requestedAnimals %}
-                      {% if animal.demandes is empty %}
-                      </div></div>
-                      {% else %}
+                    @foreach ($requestedAnimals as $animal)
+                      @if (count($animal->demandes) > 0)
                         <tr tabindex="0"class="view text-fond text-sm bg-accents2 font-grands font-semibold p-3 border-accents2-dark border-solid border-1 hover:bg-accents2-dark">
-                          <td colspan="3" scope="colgroup" class="px-2 pt-2  border-accents2-dark border-solid border-1">{{ animal.nom }}</td>
-                          <td colspan="3" scope="colgroup" class="px-2 pt-2  border-accents2-dark border-solid border-1">{{ animal.demandes|length }}</td>
+                          <td colspan="3" scope="colgroup" class="px-2 pt-2  border-accents2-dark border-solid border-1">{{ $animal->nom }}</td>
+                          <td colspan="3" scope="colgroup" class="px-2 pt-2  border-accents2-dark border-solid border-1">{{ count($animal->demandes) }}</td>
                         </tr>
                         <tr class="fold mb-3 bg-fond rounded-b-lg hidden">
                           <tr class="fold text-fond text-sm bg-accents2-light font-grands font-semibold p-3 border-accents2-dark border-solid border-1 hidden">
@@ -49,24 +46,26 @@
                             <td colspan="2" class="px-2 pt-2  border-accents2-light border-solid border-1">Date de demande</td>
                             <td colspan="2" class="px-2 pt-2  border-accents2-light border-solid border-1">Statut</td>
                           </tr>
-                          {% for demande in animal.demandes %}
-                            {% if (loop.index % 2 > 0) %}
-                              <tr class="fold text-sm font-body font-semibold hidden bg bg-fond">                           
-                            {% else %}
-                              <tr class="fold text-sm font-semibold font-body hidden text-fond bg-accents2-light">                                                       
-                            {% endif %}
-                                
-                                <td colspan="2">{{ demande.potentiel_accueillant.nom }}</td>
-                                <td colspan="2">{{ demande.date_debut }}</td>
+                          @foreach ($animal->demandes as $demande)
+                            @if ($loop->iteration % 2 > 0)
+                              <tr class="fold text-sm font-body font-semibold hidden bg bg-fond">
+                            @else
+                              <tr class="fold text-sm font-semibold font-body hidden text-fond bg-accents2-light">
+                            @endif
+
+                                <td colspan="2">{{ $demande->potentiel_accueillant->nom }}</td>
+                                <td colspan="2">{{ $demande->date_debut }}</td>
                                 <td colspan="2"><a tabindex="0" class="hover:underline"
-                                href="{{ path('shelter_request_details', {'requestId': demande.id }) }}">{{ demande.statut_demande }}</a></td>
+                                href="/association/profil/demandes/{{ $demande->id }}">{{ $demande->statut_demande }}</a></td>
                               </tr>
-                          {% endfor %}
+                          @endforeach
                         </tr>
-                      {% endif %}
-                    {% endfor %}
+                      @else
+                      </div></div>
+                      @endif
+                    @endforeach
                   </table>
-              {% endif %}
+              @endif
             </div>
           </div>
         </div>
@@ -74,8 +73,8 @@
     </div>
   </div>
 </main>
+@endsection
 
+@push('scripts')
 <script src="{{ asset('js/dashboardSuiviDemande.js') }}"></script>
-
-
-{% endblock %}
+@endpush

@@ -44,12 +44,18 @@ class Famille extends Model
     /**
      * Get the list of potential fostered animals.
      */
-    public function demandes(): BelongsToMany
+    public function animal_accueillable(): BelongsToMany
       {
-        return $this->belongToMany(Animal::class, 'demandes', 'animal_id', 'famille_id')->withPivot('statut_demande', 'date_debut', 'date_fin');
+        return $this->belongsToMany(Animal::class, 'demandes', 'famille_id', 'animal_id')->withPivot('statut_demande', 'date_debut', 'date_fin');
       }
-    //! PIVOT NAME MIGHT BE PROBLEMATIC
 
+    /**
+     * Get all requests made.
+     */
+    public function demandes(): HasMany
+    {
+        return $this->hasMany(Demande::class, 'famille_id');
+    }
 
     /**
      * Get the user associated with the shelter.

@@ -45,6 +45,7 @@ Route::controller(AssociationController::class)->group(function () {
 Route::controller(LoginController::class)->group(function () {
     Route::get('/connexion', 'display_login');
     Route::post('/connexion', 'login');
+    Route::post('/deconnexion', 'logout');
 });
 
 //* Register Pages
@@ -81,7 +82,8 @@ Route::controller(ShelterController::class)->group(function () {
         Route::prefix('/animaux')->group(function () {
             Route::get('/', 'shelter_animals_list');
             Route::get('/suivi', 'shelter_fostered_animals');
-            Route::get('/nouveau-profil', 'shelter_create_animal');
+            Route::post('/nouveau-profil', 'shelter_create_animal');
+            Route::get('/nouveau-profil', 'shelter_display_create_animal');
             Route::get('/{animalId}', 'shelter_animal_details');
         });
 

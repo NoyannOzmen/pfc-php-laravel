@@ -58,7 +58,7 @@ class Animal extends Model
     /**
      * Get the current foster family of the animal.
      */
-    public function accueillant(): BelongsTo
+    public function famille(): BelongsTo
       {
         return $this->belongsTo(Famille::class, 'famille_id');
       }
@@ -74,11 +74,18 @@ class Animal extends Model
     /**
      * Get the list of potential foster families
      */
-    public function requests(): BelongsToMany
+/*     public function potentiel_accueillant(): BelongsToMany
       {
-        return $this->belongToMany(Famille::class, 'demandes', 'animal_id', 'famille_id')->withPivot('statut_demande', 'date_debut', 'date_fin');
-      }
-    //! PIVOT NAME MIGHT BE PROBLEMATIC
+        return $this->belongsToMany(Famille::class, 'demandes', 'animal_id', 'famille_id')->withPivot('statut_demande', 'date_debut', 'date_fin');
+      } */
+
+    /**
+     * Get all requests for the animal.
+     */
+    public function demandes(): HasMany
+        {
+            return $this->hasMany(Demande::class, 'animal_id');
+        }
 
     /**
      * Indicates if the model should be timestamped.

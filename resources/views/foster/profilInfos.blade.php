@@ -1,6 +1,5 @@
-{% extends "base.html.twig" %}
-
-{% block body %}
+@extends('layouts.app')
+@section('content')
 <main class="justify-self-stretch flex-1">
 	<h2 class="font-grands text-3xl text-center my-2 py-6">Bienvenue sur votre espace personnel</h2>
   <div class="flex flex-col content-center justify-center mx-auto mb-4 w-[80%]">
@@ -18,59 +17,59 @@
       <section class="flex flex-wrap justify-center" id="dashboard-container">
         <h3 class="font-grands text-3xl text-center my-2 pt-5 w-full">Mon profil</h3>
 
-         {% for message in app.flashes('notice') %}
-          <div class="flash-notice font-grands font-base text-accents1 text-center">
-          {{ message }}
-          </div>
-        {% endfor %}
+        <!--
+        <div class="flash-notice font-grands font-base text-accents1 text-center">
+          app flash messages
+        </div>
+        -->
 
-        <form class="flex flex-col flex-wrap content-center justify-around text-texte w-full" action="{{ path('foster_profile_update') }}" method="POST">
-          
+        <form class="flex flex-col flex-wrap content-center justify-around text-texte w-full" action="" method="POST">
+
           <fieldset class="w-[60%] font-body rounded-lg shadow my-2 py-5">
             <legend class="text-center">Mes informations&nbsp;<span tabindex="0" class="material-symbols-outlined">edit</span></legend>
 
-            <div class="mx-auto p-2"> 
+            <div class="mx-auto p-2">
               <label class="text-center w-full" for="prenom">Prénom</label>
-              <input class="block w-full" type="text" id="prenom" name="_prenom" value="{{ famille.prenom }}" disabled>
+              <input class="block w-full" type="text" id="prenom" name="_prenom" value="{{ $famille->prenom }}" disabled>
             </div>
             <div class="mx-auto p-2">
               <label class="text-center w-full" for="nom">Nom</label>
-              <input class="block w-full" type="text" id="nom" name="_nom" value="{{ famille.nom }}" disabled>
+              <input class="block w-full" type="text" id="nom" name="_nom" value="{{ $famille->nom }}" disabled>
             </div>
           </fieldset>
-      
+
           <fieldset class="font-body rounded-lg shadow my-2 py-5">
             <legend class="text-center">Mon accueil&nbsp;<span tabindex="0" class="material-symbols-outlined">edit</span></legend>
 
               <div class="mx-auto p-2">
                 <label class="text-center w-full" for="hebergement">Type</label>
-                <input class="block w-full" type="text" id="hebergement" name="_hebergement" value="{{ famille.hebergement }}" disabled>
+                <input class="block w-full" type="text" id="hebergement" name="_hebergement" value="{{ $famille->hebergement }}" disabled>
               </div>
 
               <div class="mx-auto p-2">
                 <label class="text-center w-full" for="terrain">Terrain</label>
-                <input class="block w-full" type="text" id="terrain" name="_terrain" value="{{ famille.terrain }}" disabled>
+                <input class="block w-full" type="text" id="terrain" name="_terrain" value="{{ $famille->terrain }}" disabled>
               </div>
 
               <div class="mx-auto p-2">
                 <label class="text-center w-full" for="rue">Rue</label>
-                <input class="block w-full" type="text" id="rue" name="_rue" value="{{ famille.rue }}" disabled>
+                <input class="block w-full" type="text" id="rue" name="_rue" value="{{ $famille->rue }}" disabled>
               </div>
 
-              <div class="mx-auto p-2">       
+              <div class="mx-auto p-2">
                 <label class="text-center w-full" for="commune">Commune</label>
-                <input class="block w-full" type="text" id="commune" name="_commune" value="{{ famille.commune }}" disabled>
+                <input class="block w-full" type="text" id="commune" name="_commune" value="{{ $famille->commune }}" disabled>
               </div>
 
               <div class="mx-auto p-2">
                 <label class="text-center w-full" for="code_postal">Code Postal</label>
-                <input class="block w-full" type="text" id="code_postal" name="_code_postal" pattern="^(?:0[1-9]|[1-8]\d|9[0-8])\d{3}$" value="{{ famille.code_postal }}" disabled>
+                <input class="block w-full" type="text" id="code_postal" name="_code_postal" pattern="^(?:0[1-9]|[1-8]\d|9[0-8])\d{3}$" value="{{ $famille->code_postal }}" disabled>
               </div>
           </fieldset>
 
           <button id="validate" class="hidden w-[60%] mx-auto my-3 py-2 px-4 bg-accents1-light text-fond transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg" type="submit">Valider les modifications</button>
         </form>
-        <form class="flex flex-col flex-wrap content-center justify-around text-texte" action="{{ path('foster_delete_account') }}" onsubmit="return confirm('Voulez-vous vraiment supprimer votre profil ? Cette action est irréversible !')">
+        <form class="flex flex-col flex-wrap content-center justify-around text-texte" action="/famille/profil/delete" onsubmit="return confirm('Voulez-vous vraiment supprimer votre profil ? Cette action est irréversible !')">
           <button id="deleteAccount" class="w-[60%] mx-auto my-3 py-2 px-4 bg-accents2-dark text-fond transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg" type="submit">Supprimer mon profil</button>
           <p class="text-center w-full">ATTENTION ! Cette suppression est définitive !</p>
         </form>
@@ -78,7 +77,8 @@
     </div>
   </div>
 </main>
+@endsection
 
+@push('scripts')
 <script src="{{ asset('js/editInputs.js') }}" async></script>
-
-{% endblock %}
+@endpush

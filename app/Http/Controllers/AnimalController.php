@@ -46,11 +46,11 @@ class AnimalController extends Controller
             $query->where('sexe', "$sexe");
         };
 
-        if ($request->has('_minAge')) {
+        if ($request->has('_minAge') && !(empty($minAge))) {
             $query->where('age', '>', "$minAge");
         };
 
-        if ($request->has('_maxAge')) {
+        if ($request->has('_maxAge') && !(empty($minAge))) {
             $query->where('age', '<', "$maxAge");
         };
 
@@ -82,7 +82,7 @@ class AnimalController extends Controller
     public function make_request($id): View
     {
         $animal = Animal::findOrFail($id);
-        //! REMOVE HARDCODED
+        //!TODO REMOVE HARDCODED
         $user = 1;
 
         $request = Demande::firstOrCreate(

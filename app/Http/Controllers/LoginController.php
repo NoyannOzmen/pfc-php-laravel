@@ -20,4 +20,11 @@ class LoginController extends Controller
     public function login() {
 
     }
+
+    /**
+     * Handle logout.
+     */
+    public function logout() {
+
+    }
 }
