@@ -7,6 +7,8 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShelterController;
 use App\Http\Controllers\SignUpController;
+use App\Http\Middleware\FosterMiddleware;
+use App\Http\Middleware\ShelterMiddleware;
 use App\Models\Animal;
 use Illuminate\Support\Facades\Route;
 
@@ -60,38 +62,42 @@ Route::controller(SignUpController::class)->group(function () {
 });
 
 //* Foster Pages
-Route::controller(FosterController::class)->group(function () {
-    Route::prefix('/famille/profil')->group(function () {
-        Route::get('/', 'foster_profile');
-        Route::post('/', 'foster_edit');
-        Route::get('/delete', 'foster_destroy');
-        Route::get('/demandes', 'foster_requests');
+Route::middleware(FosterMiddleware::class)->group(function() {
+    Route::controller(FosterController::class)->group(function () {
+        Route::prefix('/famille/profil')->group(function () {
+            Route::get('/', 'foster_profile');
+            Route::post('/', 'foster_edit');
+            Route::get('/delete', 'foster_destroy');
+            Route::get('/demandes', 'foster_requests');
+        });
     });
 });
 
 //* Shelter Pages
-Route::controller(ShelterController::class)->group(function () {
-    Route::prefix('/association/profil')->group(function () {
+Route::middleware(ShelterMiddleware::class)->group(function() {
+    Route::controller(ShelterController::class)->group(function () {
+        Route::prefix('/association/profil')->group(function () {
 
-        Route::get('/', 'shelter_dashboard');
-        Route::post('/', 'shelter_edit');
-        Route::get('/delete', 'shelter_destroy');
-        Route::get('/logo', 'shelter_logo');
-        Route::post('/logo', 'shelter_logo_upload');
+            Route::get('/', 'shelter_dashboard');
+            Route::post('/', 'shelter_edit');
+            Route::get('/delete', 'shelter_destroy');
+            Route::get('/logo', 'shelter_logo');
+            Route::post('/logo', 'shelter_logo_upload');
 
-        Route::prefix('/animaux')->group(function () {
-            Route::get('/', 'shelter_animals_list');
-            Route::get('/suivi', 'shelter_fostered_animals');
-            Route::post('/nouveau-profil', 'shelter_create_animal');
-            Route::get('/nouveau-profil', 'shelter_display_create_animal');
-            Route::get('/{animalId}', 'shelter_animal_details');
-        });
+            Route::prefix('/animaux')->group(function () {
+                Route::get('/', 'shelter_animals_list');
+                Route::get('/suivi', 'shelter_fostered_animals');
+                Route::post('/nouveau-profil', 'shelter_create_animal');
+                Route::get('/nouveau-profil', 'shelter_display_create_animal');
+                Route::get('/{animalId}', 'shelter_animal_details');
+            });
 
-        Route::prefix('/demandes')->group(function () {
-        Route::get('/', 'shelter_requests');
-        Route::get('/{demandeId}', 'shelter_request_details');
-        Route::post('/{demandeId}/deny', 'shelter_deny_request');
-        Route::post('/{demandeId}/accept', 'shelter_accept_request');
+            Route::prefix('/demandes')->group(function () {
+            Route::get('/', 'shelter_requests');
+            Route::get('/{demandeId}', 'shelter_request_details');
+            Route::post('/{demandeId}/deny', 'shelter_deny_request');
+            Route::post('/{demandeId}/accept', 'shelter_accept_request');
+            });
         });
     });
 });
