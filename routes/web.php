@@ -45,7 +45,7 @@ Route::controller(AssociationController::class)->group(function () {
 Route::controller(LoginController::class)->group(function () {
     Route::get('/connexion', 'display_login');
     Route::post('/connexion', 'login');
-    Route::post('/deconnexion', 'logout');
+    Route::get('/deconnexion', 'logout');
 });
 
 //* Register Pages
@@ -64,7 +64,7 @@ Route::controller(FosterController::class)->group(function () {
     Route::prefix('/famille/profil')->group(function () {
         Route::get('/', 'foster_profile');
         Route::post('/', 'foster_edit');
-        Route::post('/delete', 'foster_destroy');
+        Route::get('/delete', 'foster_destroy');
         Route::get('/demandes', 'foster_requests');
     });
 });
@@ -75,7 +75,7 @@ Route::controller(ShelterController::class)->group(function () {
 
         Route::get('/', 'shelter_dashboard');
         Route::post('/', 'shelter_edit');
-        Route::post('/delete', 'shelter_destroy');
+        Route::get('/delete', 'shelter_destroy');
         Route::get('/logo', 'shelter_logo');
         Route::post('/logo', 'shelter_logo_upload');
 

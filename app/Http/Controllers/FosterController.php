@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Animal;
 use App\Models\Demande;
 use App\Models\Famille;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class FosterController extends Controller
 {
@@ -16,9 +18,8 @@ class FosterController extends Controller
      */
     public function foster_profile(): View
     {
-        /* $userId = $user->accueillant->id; */
-        //!TODO REMOVE HARDCODED
-        $userId = 1;
+        $userId = Auth::user()->accueillant->id;
+
 
         return view('foster/profilInfos', ['famille' => Famille::findOrFail($userId)]);
     }
@@ -28,9 +29,8 @@ class FosterController extends Controller
      */
     public function foster_edit(Request $request): RedirectResponse
     {
-        /* $userId = $user->accueillant->id; */
-        //!TODO REMOVE HARDCODED
-        $userId = 1;
+        $userId = Auth::user()->accueillant->id;
+
         $famille = Famille::findOrFail($userId);
 
         $nom = $request->request->get('_nom');
@@ -41,17 +41,17 @@ class FosterController extends Controller
         $commune = $request->request->get('_commune');
         $code_postal = $request->request->get('_code_postal');
 
-        if ($request->has("_nom")) {$famille->nom($nom);};
-        if ($request->has("_prenom")) {$famille->prenom($prenom);};
-        if ($request->has("_hebergement")) {$famille->hebergement($hebergement);};
-        if ($request->has("_terrain")) {$famille->terrain($terrain);};
-        if ($request->has("_rue")) {$famille->rue($rue);};
-        if ($request->has("_commune")) {$famille->commune($commune);};
-        if ($request->has("_$code_postal")) {$famille->code_postal($code_postal);};
+        if ($request->has("_nom")) {$famille->nom = $nom;};
+        if ($request->has("_prenom")) {$famille->prenom = $prenom;};
+        if ($request->has("_hebergement")) {$famille->hebergement = $hebergement;};
+        if ($request->has("_terrain")) {$famille->terrain = $terrain;};
+        if ($request->has("_rue")) {$famille->rue = $rue;};
+        if ($request->has("_commune")) {$famille->commune = $commune;};
+        if ($request->has("_$code_postal")) {$famille->code_postal = $code_postal;};
 
         $famille->save();
 
-        return redirect('foster/profilInfos', ['famille' => $famille]);
+        return redirect('famille/profil')->with('famille', $famille);
     }
 
     /**
@@ -59,30 +59,30 @@ class FosterController extends Controller
      */
     public function foster_destroy(): RedirectResponse
     {
-        /* $userId = $user->accueillant->id; */
-        //!TODO REMOVE HARDCODED
-        $userId = 1;
+        $userId = Auth::user()->accueillant->id;
+        $user = User::find(Auth::user()->id);
+
         $famille = Famille::findOrFail($userId);
 
-        $requests = Demande::where('famille_id', $userId);
-        if ($requests) {
+        $requests = Demande::where('famille_id', '=', $userId)->get();
+        if (count($requests) > 0) {
             foreach ($requests as $request) {
-                $request->destory();
+                $request->delete();
               }
         }
 
-        $fostered = Animal::where('famille_id', $userId);
+        $fostered = Animal::where('famille_id', $userId)->get();
 
-        if (!$fostered) {
-            $famille->destroy();
-            /* $user->destroy(); */
+        if ((count($fostered) == 0)) {
+            $famille->delete();
+            $user->delete();
             //* Possibly add soft-delete ?
-            return redirect("staticPages/accueil");
+            return redirect('/deconnexion');
         }
         $message = "Vous accueillez actuellement un ou plusieurs animaux enregistrés sur notre site.
         Merci de contacter le refuge concerné avant de supprimer votre compte !";
 
-        return redirect("foster/profilInfos", ["famille" => $famille, "message" => $message]);
+        return back()->with("famille", $famille)->with("message", $message);
     }
 
     /**
@@ -90,9 +90,8 @@ class FosterController extends Controller
      */
     public function foster_requests(): View
     {
-        /* $userId = $user->accueillant->id; */
-        //!TODO REMOVE HARDCODED
-        $userId = 1;
+        $userId = Auth::user()->accueillant->id;
+
         $famille = Famille::findOrFail($userId);
 
         $requests = Demande::all()->where('famille_id', $userId);

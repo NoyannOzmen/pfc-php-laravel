@@ -6,9 +6,12 @@ use App\Models\Association;
 use App\Models\Famille;
 use App\Models\User;
 use Error;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class SignUpController extends Controller
 {
@@ -48,44 +51,37 @@ class SignUpController extends Controller
 
         $user = User::find(['email' => $email]);
 
-        if ($user) {
+        if (count($user) > 0) {
             throw new Error(
                 'Invalid credentials'
             );
         } else {
-            $newUser = new User();
-            $newUser->email($email);
-            $newUser->roles(["ROLE_SHELTER"]);
-            /*
-            $hashedPassword = $passwordHasher->hashPassword(
-                $newUser,
-                $plaintextPassword
-            )
-            */;
-            $hashedPassword = "";
-            //!TODO ADD HASHING
+            $newUser = User::create([
+                'email' => $email,
+                'roles' => json_encode(["ROLE_SHELTER"]),
+                'password' => Hash::make($plaintextPassword, ['rounds' => 8]),
+            ]);
 
-            $newUser->password($hashedPassword);
-            $newUser->save();
+            $newShelter = Association::create([
+                'nom' => $nom,
+                'responsable' => $responsable,
+                'rue' =>  $rue,
+                'commune' => $commune,
+                'code_postal' =>  $code_postal,
+                'pays' =>  $pays,
+                'telephone' => $telephone,
+                'siret' => $siret,
+                'site' => ($request->request->has("_site")) ? $site : null,
+                'description' => ($request->request->has("_description")) ? $description : null,
+                'utilisateur_id' => $newUser->id,
+            ]);
 
-            $newShelter = new Association();
-            $newShelter->utilisateur($newUser);
-            $newShelter->nom($nom);
-            $newShelter->responsable($responsable);
-            $newShelter->rue($rue);
-            $newShelter->commune($commune);
-            $newShelter->code_postal($code_postal);
-            $newShelter->pays($pays);
-            $newShelter->telephone($telephone);
-            $newShelter->siret($siret);
-            if ($request->request->has("_site")) {$newShelter->site($site);};
-            if ($request->request->has("_description")) {$newShelter->description($description);};
-            $newShelter->save();
+            event(new Registered($newUser));
 
-            $message = "Création de compte réussie, bienvenue ! Merci de vous connecter à present";
+            Auth::login($newUser);
         }
 
-        return redirect('signIn/inscriptionAsso', ['message' => $message]);
+        return redirect('/');
     }
 
         /**
@@ -101,18 +97,6 @@ class SignUpController extends Controller
      */
     public function foster_signup(Request $request): RedirectResponse
     {
-        $email = $request->request->get('_email');
-        $user = User::find(['email' => $email]);
-
-        if ($user) {
-            throw new Error(
-                'Invalid credentials'
-            );
-        }
-
-        $newUser = new User();
-        $newUser->email($email);
-        $newUser->roles(["ROLE_FOSTER"]);
         $plaintextPassword = $request->request->get('_password');
         $plaintextConfirm = $request->request->get('_confirmation');
 
@@ -121,17 +105,23 @@ class SignUpController extends Controller
                 'Password and confirmation must match'
             );
         };
-        /*
-        $hashedPassword = $passwordHasher->hashPassword(
-            $newUser,
-            $plaintextPassword
-        );
-        */
-        $hashedPassword = "";
-        //!TODO ADD HASHING
 
-        $newUser->password($hashedPassword);
-        $newUser->save();
+        $email = $request->request->get('_email');
+        $user = User::find(['email' => $email]);
+
+        if (count($user) > 0) {
+            throw new Error(
+                'Invalid credentials'
+            );
+        }
+
+        $newUser = User::create([
+            'email' => $email,
+            'roles' => json_encode(["ROLE_FOSTER"]),
+            'password' => Hash::make($plaintextPassword, ['rounds' => 8]),
+        ]);
+
+        event(new Registered($newUser));
 
         $nom = $request->request->get('_nom');
         $prenom = $request->request->get('_prenom');
@@ -143,24 +133,21 @@ class SignUpController extends Controller
         $hebergement = $request->request->get('_hebergement');
         $terrain = $request->request->get('_terrain');
 
-        $newFoster = new Famille();
-        $newFoster->utilisateur($newUser);
-        $newFoster->nom($nom);
-        if ($request->request->has("_prenom")) {$newFoster->prenom($prenom);};
-        if ($request->request->has("_terrain")) {$newFoster->terrain($terrain);};
-        $newFoster->hebergement($hebergement);
-        $newFoster->rue($rue);
-        $newFoster->commune($commune);
-        $newFoster->code_postal($code_postal);
-        $newFoster->pays($pays);
-        $newFoster->telephone($telephone);;
-        $newFoster->save();
+        $newFoster = Famille::create([
+            'prenom' => ($request->request->has("_prenom")) ? $prenom : null,
+            'nom' => $nom,
+            'rue' =>  $rue,
+            'commune' => $commune,
+            'code_postal' =>  $code_postal,
+            'pays' =>  $pays,
+            'telephone' => $telephone,
+            'hebergement'=> $hebergement,
+            'terrain' => ($request->request->has("_terrain")) ? $terrain : null,
+            'utilisateur_id' => $newUser->id
+        ]);
 
-        $newUser->accueillant($newFoster);
-        $newUser->save();
+        Auth::login($newUser);
 
-        $message = "Création de compte réussie, bienvenue ! Merci de vous connecter à present";
-
-    return redirect('signIn/inscriptionFam', ["message" => $message]);
+    return redirect('/famille/inscription');
     }
 }

@@ -30,7 +30,7 @@
           </div> -->
 
         <form class="flex flex-col flex-wrap content-center md:w-[60%] justify-center text-texte" action="" method="POST">
-
+        @csrf
           <fieldset class="shrink font-body rounded-lg shadow my-2 py-5">
             <legend class="text-center">Mon organisme&nbsp;<span tabindex="0" class="material-symbols-outlined">edit</span></legend>
 
@@ -91,6 +91,7 @@
       </section>
       <section class="flex flex-wrap justify-center">
         <form class="flex flex-col flex-wrap content-center justify-around text-texte" action="/association/profil/delete" onsubmit="return confirm('Voulez-vous vraiment supprimer votre profil ? Cette action est irréversible !')">
+        @csrf
           <button class="w-full md:w-[60%] mx-auto my-3 py-2 px-4 bg-accents2-dark text-fond transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg" type="submit">Supprimer mon profil</button>
           <p class="text-center">ATTENTION ! Cette suppression est définitive !</p>
         </form>

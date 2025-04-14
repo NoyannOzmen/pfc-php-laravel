@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -35,17 +36,17 @@ class User extends Authenticatable
     /**
      * Get shelter informations
      */
-    public function refuge(): BelongsTo
+    public function refuge(): HasOne
       {
-        return $this->belongsTo(Association::class);
+        return $this->hasOne(Association::class, 'utilisateur_id');
       }
 
     /**
      * Get foster family informations
      */
-    public function accueillant(): BelongsTo
+    public function accueillant(): HasOne
       {
-        return $this->belongsTo(Famille::class);
+        return $this->hasOne(Famille::class, 'utilisateur_id');
       }
 
     /**

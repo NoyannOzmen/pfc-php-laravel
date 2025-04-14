@@ -28,7 +28,7 @@
         <h3 class="text-center hidden md:inline font-grands text-4xl font-extrabold mt-4">Animaux</h3>
 
         <form autocomplete="off" class="my-4 px-4 flex flex-wrap gap-3 justify-center md:w-1/4 md:absolute md:top-0 md:right-5 md:my-2 md:p-0 md:pr-4 md:justify-end z-10" action="">
-
+        @csrf
           <div class=" flex gap-x-1.5 text-center h-5">
             <label class="hidden">Recherche</label>
             <input id="search-bar" class="bg-fond rounded-full block pl-2 md:w-32 lg:w-full shrink-0" type="text" placeholder="Rechercher">
@@ -37,7 +37,7 @@
               </span>
           </div>
 
-          <div id="search-filters" class="flex gap-4 hidden md:bg-fond p-4 rounded-lg border-accents2 md:border-4">
+          <div id="search-filters" class="gap-4 hidden md:bg-fond p-4 rounded-lg border-accents2 md:border-4">
             <fieldset>
               @foreach ($especes as $espece)
                 <div class="flex gap-x-1.5 content-center mb-1">
@@ -102,5 +102,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/dashboardAssoListe$Animal->js') }}"></script>
+<script src="{{ asset('js/dashboardAssoListeAnimal->js') }}"></script>
 @endpush

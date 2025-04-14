@@ -22,26 +22,22 @@
             <!-- Login Navigation -->
             @auth
               <li class="border-2 border-accents2-dark max-[767px]:border-b-fond md:mr-4 md:border-r-fond px-4 max-[767px]:pb-2 place-self-center md:place-self-start pl-2">
-                @if (is_granted('ROLE_SHELTER'))
-                  <a href="/association/profil">Bonjour : {{ app.user.refuge.nom }}</a>
+                @if (Auth::user()->refuge)
+                  <a href="/association/profil">Bonjour : {{ Auth::user()->refuge->nom }}</a>
                 @endif
 
-                @if (is_granted('ROLE_FOSTER'))
-                  @if (app.user.accueillant.prenom)
-                    <a href="/famille/profil"> Bonjour : {{ app.user.accueillant.prenom }}</a>
-                  @else
-                    <a href="/famille/profil">Bonjour : {{ app.user.accueillant.nom }}</a>
-                  @endif
+                @if (Auth::user()->accueillant)
+                    <a href="/famille/profil"> Bonjour : {{ Auth::user()->accueillant->prenom ? Auth::user()->accueillant->prenom : Auth::user()->accueillant->nom }}</a>
                 @endif
               </li>
-              @if (is_granted('ROLE_SHELTER'))
+              @if (Auth::user()->refuge)
                 <li class="border-2 border-accents2-dark mr-0 max-[767px]:border-b-fond  md:border-r-fond px-4 pr-6 max-[767px]:pb-2 place-self-center md:place-self-start">
                   <a tabindex=0 class="hover:text-accents1-light" href="/association/profil/animaux">Tableau de&nbsp;bord</a>
                 </li>
               @endif
-              @if (is_granted('ROLE_FOSTER'))
+              @if (Auth::user()->accueillant)
                 <li class="border-2 border-accents2-dark mr-0 max-[767px]:border-b-fond  md:border-r-fond px-4 pr-6 max-[767px]:pb-2 place-self-center md:place-self-start">
-                  <a tabindex=0 class="hover:text-accents1-light" href="/famille/profil">Tableau de&nbsp;bord</a>
+                  <a tabindex=0 class="hover:text-accents1-light" href="/famille/profil">Mon&nbsp;profil</a>
                 </li>
               @endif
               <li id="log-out" class="border-2 border-accents2-dark place-self-center md:place-self-start pl-2">

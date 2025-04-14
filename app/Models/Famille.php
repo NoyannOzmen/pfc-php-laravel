@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -30,7 +31,8 @@ class Famille extends Model
         'code_postal',
         'pays',
         'hebergement',
-        'terrain'
+        'terrain',
+        'utilisateur_id'
     ];
 
     /**
@@ -60,9 +62,9 @@ class Famille extends Model
     /**
      * Get the user associated with the shelter.
      */
-    public function identifiant_famille(): HasOne
+    public function identifiant_famille(): BelongsTo
       {
-        return $this->hasOne(User::class, 'utilisateur_id');
+        return $this->belongsTo(User::class);
       }
 
     /**

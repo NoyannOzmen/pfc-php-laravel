@@ -6,7 +6,7 @@
   <div class="font-body mx-auto w-[80%] bg-zoning rounded-lg shadow my-4 py-6">
 
     <form class="flex flex-col flex-wrap content-center justify-around text-texte" method="POST">
-
+    @csrf
         <!-- <div class="flash-notice font-grands font-base text-accents1 text-center">
             app flash notice message
         </div> -->
@@ -15,7 +15,7 @@
         <legend class="font-bold text-lg font-grands text-center">Vos informations</legend>
         <div class="mx-auto p-2">
           <label class="text-center w-full" for="firstname">Prénom</label>
-          <input class="block bg-fond w-full" type="text" id="text" name="_prenom" placeholder="Charlotte" required>
+          <input class="block bg-fond w-full" type="text" id="firstname" name="_prenom" placeholder="Charlotte" required>
         </div>
         <div class="mx-auto p-2">
           <label class="text-center w-full" for="nom">Nom</label>

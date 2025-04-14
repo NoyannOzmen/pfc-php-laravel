@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -30,7 +31,8 @@ class Association extends Model
         'siret',
         'telephone',
         'site',
-        'description'
+        'description',
+        'utilisateur_id'
     ];
 
     /**
@@ -51,9 +53,9 @@ class Association extends Model
     /**
      * Get the user associated with the shelter.
      */
-    public function identifiant_association(): HasOne
+    public function identifiant_association(): BelongsTo
       {
-        return $this->hasOne(User::class, 'utilisateur_id');
+        return $this->belongsTo(User::class);
       }
 
     /**

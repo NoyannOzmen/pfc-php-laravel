@@ -21,6 +21,7 @@
 			<h4 class="text-2xl mb-4 text-center my-2 py-4">Nous contacter directement</h4>
 
 			<form class="flex flex-col flex-wrap justify-around text-texte" action="mailto:#" method="POST">
+            @csrf
 				<div class="mx-auto w-[60%] p-2">
 					<label class="text-center" for="prenom">Votre Prénom</label>
 					<input class="block bg-fond w-full" type="text" placeholder="Giorno" name="prenom" id="prenom" required />

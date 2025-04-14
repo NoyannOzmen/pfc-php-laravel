@@ -9,9 +9,11 @@ use App\Models\Demande;
 use App\Models\Espece;
 use App\Models\Media;
 use App\Models\Tag;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ShelterController extends Controller
 {
@@ -20,9 +22,8 @@ class ShelterController extends Controller
      */
     public function shelter_dashboard(): View
     {
-        /* $userId = $user->refuge->id; */
-        //!TODO REMOVE HARDCODED
-        $userId = 1;
+        $userId = Auth::user()->refuge->id;
+
 
         return view('shelter/dashInfos', ['association' => Association::findOrFail($userId)]);
     }
@@ -32,9 +33,8 @@ class ShelterController extends Controller
      */
     public function shelter_edit(Request $request): View
     {
-        /* $userId = $user->refuge->id; */
-        //!TODO REMOVE HARDCODED
-        $userId = 1;
+        $userId = Auth::user()->refuge->id;
+
         $association = Association::findOrFail($userId);
 
         $nom = $request->request->get('_nom');
@@ -48,16 +48,16 @@ class ShelterController extends Controller
         $site = $request->request->get('_site');
         $description = $request->request->get('_description');
 
-        if ($request->has("_nom")) {$association->nom($nom);};
-        if ($request->has("_responsable")) {$association->responsablee($responsable);};
-        if ($request->has("_rue")) {$association->rue($rue);};
-        if ($request->has("_commune")) {$association->commune($commune);};
-        if ($request->has("_code_postal")) {$association->code_postal($code_postal);};
-        if ($request->has("_pays")) {$association->pays($pays);};
-        if ($request->has("_telephone")) {$association->telephone($telephone);};
-        if ($request->has("_siret")) {$association->siret($siret);};
-        if ($request->has("_site")) {$association->site($site);};
-        if ($request->has("_description")) {$association->description($description);};
+        if ($request->has("_nom")) {$association->nom = $nom;};
+        if ($request->has("_responsable")) {$association->responsable = $responsable;};
+        if ($request->has("_rue")) {$association->rue = $rue;};
+        if ($request->has("_commune")) {$association->commune = $commune;};
+        if ($request->has("_code_postal")) {$association->code_postal = $code_postal;};
+        if ($request->has("_pays")) {$association->pays = $pays;};
+        if ($request->has("_telephone")) {$association->telephone = $telephone;};
+        if ($request->has("_siret")) {$association->siret = $siret;};
+        if ($request->has("_site")) {$association->site = $site;};
+        if ($request->has("_description")) {$association->description = $description;};
 
         $association->save();
 
@@ -69,23 +69,23 @@ class ShelterController extends Controller
      */
     public function shelter_destroy(): RedirectResponse
     {
-        /* $userId = $user->refuge->id; */
-        //!TODO REMOVE HARDCODED
-        $userId = 1;
-        $association = Association::findOrFail($userId);
+        $userId = Auth::user()->refuge->id;
+        $user = User::find(Auth::user()->id);
 
-        $sheltered = Animal::where('association_id', $userId);
+        $association = Association::findOrFail($userId)->first();
 
-        if (!$sheltered) {
-            $association->destroy();
-            /* $user->destroy(); */
+        $sheltered = Animal::where('association_id', $userId)->get();
+
+        if (count($sheltered) > 0) {
+            $association->delete();
+            $user->delete();
             //* Possibly add soft-delete ?
-            return redirect("staticPages/accueil");
+            return redirect('/deconnexion');
         }
         $message = 'Vous accueillez actuellement un ou plusieurs animaux enregistrés sur notre site.
             Merci de contacter un administrateur afin de supprimer votre compte !';
 
-        return redirect("shelter/dashInfos", ["association" => $association, "message" => $message]);
+        return back()->with("association", $association)->with("message", $message);
     }
 
     /**
@@ -93,9 +93,8 @@ class ShelterController extends Controller
      */
     public function shelter_logo(): View
     {
-        /* $userId = $user->refuge->id; */
-        //!TODO REMOVE HARDCODED
-        $userId = 1;
+        $userId = Auth::user()->refuge->id;
+
         $association = Association::findOrFail($userId);
         //!TODO FIX FORM
 
@@ -107,14 +106,13 @@ class ShelterController extends Controller
      */
     public function shelter_logo_upload(): RedirectResponse
     {
-        /* $userId = $user->refuge->id; */
-        //!TODO REMOVE HARDCODED
-        $userId = 1;
+        $userId = Auth::user()->refuge->id;
+
         $association = Association::findOrFail($userId);
 
         //!TODO ADD LOGIC
 
-        return redirect("shelter/dashLogo", ["association" => $association]);
+        return redirect("association/profil/logo")->with("association", $association);
     }
 
     //* ANIMAL RELATED METHODS
@@ -124,9 +122,8 @@ class ShelterController extends Controller
      */
     public function shelter_animals_list(): View
     {
-        /* $userId = $user->refuge->id; */
-        //!TODO REMOVE HARDCODED
-        $userId = 1;
+        $userId = Auth::user()->refuge->id;
+
         $association = Association::findOrFail($userId);
 
         $animals = Animal::all()->where("association_id", $userId);
@@ -139,9 +136,8 @@ class ShelterController extends Controller
      */
     public function shelter_fostered_animals(): View
     {
-        /* $userId = $user->refuge->id; */
-        //!TODO REMOVE HARDCODED
-        $userId = 1;
+        $userId = Auth::user()->refuge->id;
+
         $association = Association::findOrFail($userId);
 
         /* $animals = $association->pensionnaires->filter('statut', 'Accueilli'); */
@@ -155,9 +151,8 @@ class ShelterController extends Controller
      */
     public function shelter_animal_details($id): View
     {
-        /* $userId = $user->refuge->id; */
-        //!TODO REMOVE HARDCODED
-        $userId = 1;
+        $userId = Auth::user()->refuge->id;
+
         $association = Association::findOrFail($userId);
 
         $animal = Animal::findOrFail($id);
@@ -173,9 +168,8 @@ class ShelterController extends Controller
      */
     public function shelter_display_create_animal(): View
     {
-        /* $userId = $user->refuge->id; */
-        //!TODO REMOVE HARDCODED
-        $userId = 1;
+        $userId = Auth::user()->refuge->id;
+
         $association = Association::findOrFail($userId);
 
 
@@ -187,10 +181,7 @@ class ShelterController extends Controller
      */
     public function shelter_create_animal(Request $request): RedirectResponse
     {
-        /* $userId = $user->refuge->id; */
-        //!TODO REMOVE HARDCODED
-        $userId = 1;
-        $association = Association::findOrFail($userId);
+        $userId = Auth::user()->refuge->id;
 
         $animalForm = $request->request->get('create_animal');
         $tagForm = $request->request->get('create_tag');
@@ -212,30 +203,30 @@ class ShelterController extends Controller
             };
 
             $newAnimal = new Animal();
-            $newAnimal->nom($name);
-            $newAnimal->sexe($sex);
-            $newAnimal->age($age);
-            $newAnimal->espece($espece);
+            $newAnimal->nom = $name;
+            $newAnimal->sexe = $sex;
+            $newAnimal->age = $age;
+            $newAnimal->espece = $espece;
             if ($race) {
-                $newAnimal->race($race);
+                $newAnimal->race = $race;
             }
-            $newAnimal->couleur($colour);
-            $newAnimal->description($description);
-            $newAnimal->refuge($association);
+            $newAnimal->couleur = $colour;
+            $newAnimal->description = $description;
+            $newAnimal->association_id = $userId;
             if (count($tagsToAdd) > 0) {
                 foreach ($tagsToAdd as $tagToAdd) {
                     $tag = AnimalTag::where($tagToAdd);
-                    $newAnimal->tags($tag);
+                    $newAnimal->tags = $tag;
                 }
             };
             $newAnimal->statut('En Refuge');
             $newAnimal->save();
 
-            $animalId = $newAnimal->id;
+            $animalId = $newAnimal->refuge->id;
             $newPhoto = new Media();
-            $newPhoto->ordre(1);
-            $newPhoto->animal_id($animalId);
-            $newPhoto->url('/images/animal_empty.webp');
+            $newPhoto->ordre = 1;
+            $newPhoto->animal_id = $animalId;
+            $newPhoto->url = '/images/animal_empty.webp';
             $newPhoto->save();
 
             $message = "Profil animal créé avec succès";
@@ -246,14 +237,14 @@ class ShelterController extends Controller
             $tagDesc = $request->request->get('_desc_tag');
 
             $newTag = new Tag();
-            $newTag->nom($tagName);
-            $newTag->description($tagDesc);
+            $newTag->nom = $tagName;
+            $newTag->description = $tagDesc;
             $newTag->save();
 
             $message = "Nouveau tag créé avec succès";
         }
 
-        return redirect("shelter/dashAnimauxCreate", ["message" => $message]);
+        return redirect("association/profil/animaux/nouveau-profil")->with("message", $message);
     }
 
 
@@ -263,9 +254,8 @@ class ShelterController extends Controller
      */
     public function shelter_requests(): View
     {
-        /* $userId = $user->refuge->id; */
-        //!TODO REMOVE HARDCODED
-        $userId = 1;
+        $userId = Auth::user()->refuge->id;
+
         $association = Association::findOrFail($userId);
 
         $requestedAnimals = Animal::all()->where("association_id", $userId)->where("statut", "En refuge");
@@ -278,9 +268,8 @@ class ShelterController extends Controller
      */
     public function shelter_request_details($demandeId): View
     {
-        /* $userId = $user->refuge->id; */
-        //!TODO REMOVE HARDCODED
-        $userId = 1;
+        $userId = Auth::user()->refuge->id;
+
         $association = Association::findOrFail($userId);
 
         $request = Demande::findOrFail($demandeId);
@@ -295,9 +284,8 @@ class ShelterController extends Controller
      */
     public function shelter_accept_request($demandeId): RedirectResponse
     {
-        /* $userId = $user->refuge->id; */
-        //!TODO REMOVE HARDCODED
-        $userId = 1;
+        $userId = Auth::user()->refuge->id;
+
         $association = Association::findOrFail($userId);
         $request = Demande::findOrFail($demandeId);
 
@@ -306,7 +294,7 @@ class ShelterController extends Controller
 
         //!TODO SET OTHERS TO DENIED
 
-        return redirect("shelter/dashDemandesSuivi", ["association" => $association, "request" => $request]);
+        return redirect("association/demandes/$demandeId")->with("association", $association)->with("request", $request);
     }
 
     /**
@@ -314,15 +302,14 @@ class ShelterController extends Controller
      */
     public function shelter_deny_request($demandeId): RedirectResponse
     {
-        /* $userId = $user->refuge->id; */
-        //!TODO REMOVE HARDCODED
-        $userId = 1;
+        $userId = Auth::user()->refuge->id;
+
         $association = Association::findOrFail($userId);
         $request = Demande::findOrFail($demandeId);
 
         $request->statut_demande = "Refusée";
         $request->save();
 
-        return redirect("shelter/dashDemandesSuivi", ["association" => $association, "request" => $request]);
+        return redirect("association/demandes/$demandeId")->with("association", $association)->with("request", $request);
     }
 }

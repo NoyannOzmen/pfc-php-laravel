@@ -6,7 +6,7 @@
   <div class="font-body mx-auto w-[80%] bg-zoning rounded-lg shadow my-4">
 
     <form class="flex flex-col flex-wrap content-center justify-around text-texte" method="POST">
-
+    @csrf
       <fieldset class="font-body rounded-lg shadow my-2 py-5">
         <legend class="font-bold text-lg font-grands text-center">Votre organisme</legend>
 

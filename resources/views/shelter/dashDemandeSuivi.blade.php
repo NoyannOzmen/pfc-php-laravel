@@ -128,9 +128,11 @@
           <h4 class="font-body font-bold text-center">Statut de la demande :</h4>
           <p id="request-status" class="font-body text-center">{{ $request->statut_demande }}</p>
           <form class="w-[80%] md:w-[20%]" action="association/profil/demandes/{ request->id }}/accept" method="POST">
+          @csrf
             <button type="submit" class="bg-accents1 w-full m-3 py-2 px-4 text-fond transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg">Accepter</button>
           </form>
           <form class="w-[80%] md:w-[20%]" action="association/profil/demandes/{ request->id }}/deny" method="POST">
+          @csrf
             <button type="submit" class="bg-accents2-dark w-full m-3 py-2 px-4 text-fond transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg">Refuser</button>
           </form>
         </div>
