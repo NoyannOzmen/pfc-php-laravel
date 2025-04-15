@@ -90,6 +90,7 @@ Route::middleware(ShelterMiddleware::class)->group(function() {
                 Route::post('/nouveau-profil', 'shelter_create_animal');
                 Route::get('/nouveau-profil', 'shelter_display_create_animal');
                 Route::get('/{animalId}', 'shelter_animal_details');
+                Route::post('/{animalId}', 'shelter_animal_picture_upload');
             });
 
             Route::prefix('/demandes')->group(function () {

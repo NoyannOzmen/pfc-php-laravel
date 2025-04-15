@@ -8,6 +8,7 @@ use App\Models\Espece;
 use App\Models\Tag;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AnimalController extends Controller
 {
@@ -82,8 +83,8 @@ class AnimalController extends Controller
     public function make_request($id): View
     {
         $animal = Animal::findOrFail($id);
-        //!TODO REMOVE HARDCODED
-        $user = 1;
+
+        $user = Auth::user()->accueillant->id;
 
         $request = Demande::firstOrCreate(
             ['animal_id' => $animal->id],

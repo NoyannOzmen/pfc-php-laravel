@@ -96,7 +96,6 @@ class ShelterController extends Controller
         $userId = Auth::user()->refuge->id;
 
         $association = Association::findOrFail($userId);
-        //!TODO FIX FORM
 
         return view("shelter/dashLogo", ["association" => $association]);
     }
@@ -104,13 +103,39 @@ class ShelterController extends Controller
     /**
      * Upload logo
      */
-    public function shelter_logo_upload(): RedirectResponse
+    public function shelter_logo_upload(Request $request): RedirectResponse
     {
         $userId = Auth::user()->refuge->id;
 
         $association = Association::findOrFail($userId);
 
-        //!TODO ADD LOGIC
+        $request->validate([
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
+        ]);
+
+        $fileName = $request->file('file')->getClientOriginalName();
+        $path = $request->file('file')->storePubliclyAs(
+            'images/animaux',
+            $fileName,
+            'uploads'
+        );
+
+        $extension = $request->file('file')->getClientOriginalExtension();
+        if(in_array($extension,["jpeg","jpg","png","webp","gif"]))
+        {
+            $webp = public_path().'/'.$path;
+            $im = imagecreatefromstring(file_get_contents($webp));
+            imagepalettetotruecolor($im);
+            $new_webp = preg_replace('"\.(jpg|jpeg|png|gif|webp)$"', '.webp', $webp);
+            unlink($webp);
+            imagewebp($im, $new_webp, 50);
+
+            $image = new Media();
+            $image->url = '/images/animaux/' . preg_replace('"\.(jpg|jpeg|png|gif|webp)$"', '.webp', $fileName);
+            $image->ordre = 1;
+            $image->association_id = $userId;
+            $image->save();
+        };
 
         return redirect("association/profil/logo")->with("association", $association);
     }
@@ -158,9 +183,41 @@ class ShelterController extends Controller
         $animal = Animal::findOrFail($id);
         $demandes = Demande::all()->where('animal_id', $id);
 
-        //!TODO ADD LOGIC
-
         return view("shelter/dashAnimauxDetails", ["association" => $association, 'animal' => $animal, 'demandes' => $demandes, 'tags' => Tag::all()]);
+    }
+
+    public function shelter_animal_picture_upload($id, Request $request): RedirectResponse
+    {
+        $animal = Animal::findOrFail($id);
+
+        $request->validate([
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
+        ]);
+
+        $fileName = $request->file('file')->getClientOriginalName();
+        $path = $request->file('file')->storePubliclyAs(
+            'images/animaux',
+            $fileName,
+            'uploads'
+        );
+
+        $extension = $request->file('file')->getClientOriginalExtension();
+        if(in_array($extension,["jpeg","jpg","png","webp","gif"])){
+            $webp = public_path().'/'.$path;
+            $im = imagecreatefromstring(file_get_contents($webp));
+            imagepalettetotruecolor($im);
+            $new_webp = preg_replace('"\.(jpg|jpeg|png|gif|webp)$"', '.webp', $webp);
+            unlink($webp);
+            imagewebp($im, $new_webp, 50);
+
+            $newPic = new Media();
+            $newPic->url = '/images/animaux/' . preg_replace('"\.(jpg|jpeg|png|gif|webp)$"', '.webp', $fileName);
+            $newPic->ordre = 1;
+            $newPic->animal_id = $id;
+            $newPic->save();
+        };
+
+        return redirect("association/profil/animaux/{animalId}")->with("animalId", $id);
     }
 
     /**

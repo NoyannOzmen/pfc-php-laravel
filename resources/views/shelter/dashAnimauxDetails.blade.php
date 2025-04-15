@@ -83,19 +83,21 @@
             </div>
           @endif
 
-          <!--
-          <div class="font-body mx-auto w-[80%] bg-zoning rounded-lg shadow dark:bg-gray-800 my-4">
-            {{ form_start(form) }}
-              <div class="flex flex-col mx-auto">
-              {{ form_row(form.media, {'attr': {'class': 'flex flex-col justify-center mx-auto'}}) }}
-              </div>
-              <div class="flex justify-center">
-                <div class="flex justify-center hover:bg-accents1-dark rounded-full hover:underline bg-accents1 text-center font-grands text-fond font-semibold text-xs py-0.5 px-4">
-                  {{ form_row(form.save) }}
+          <div className="font-body mx-auto w-[80%] bg-zoning rounded-lg shadow dark:bg-gray-800 my-4">
+            <form class="self-center" method="POST" enctype="multipart/form-data">
+            @csrf
+                <div class="flex flex-col">
+                <label for="file" class="text-center">Importer une image</label>
+                <input id="file" type="file" name="file" required/>
                 </div>
-              </div>
-            {{ form_end(form) }}
-          </div> -->
+                @error('file')
+                <div class="font-grands font-base text-accents1 text-center">{{ $message }}</div>
+                @enderror
+                <div class="flex justify-center">
+                <input type="submit" value="Importer" class="hover:bg-accents1-dark rounded-full hover:underline bg-accents1 text-center font-grands text-fond font-semibold text-xs py-0.5 px-4"/>
+                </div>
+            </form>
+          </div>
         </div>
 
         <!-- ACCUEILLANT INFOS-->
@@ -112,12 +114,6 @@
                 <p class="text-sm italic leading-3">Téléphone</p>
                 <p class="text-sm font-semibold">{{ $animal->famille->telephone }}</p>
               </div>
-              <!--
-              <div class="mb-2">
-                <p class="text-sm italic leading-3">e-mail</p>
-                <p class="text-sm font-semibold">{{ $animal->famille->utilisateur->email }}</p>
-              </div>
-              -->
               <div class="mb-2">
                 <p class="text-sm italic leading-4">Adresse</p>
                 <p class="text-sm font-semibold leading-3">{{ $animal->famille->rue }}</p>
@@ -165,5 +161,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/dashboardAssoListe$Animal->js') }}"></script>
+<script src="{{ asset('js/dashboardAssoListeAnimal->js') }}"></script>
 @endpush
