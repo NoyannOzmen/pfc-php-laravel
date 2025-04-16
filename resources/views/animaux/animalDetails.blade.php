@@ -54,11 +54,13 @@
         @auth
             @if (Auth::user()->accueillant)
             <div class="text-center w-full py-2">
-                <!--
-                <div class="flash-notice font-grands font-base text-accents1 text-center">
-                app flashes messages
+
+                @if(session('error'))
+                <div class="alert alert-danger">
+                    <p class="flash-notice font-grands font-base text-accents1 text-center">{{ session('error') }}</p>
                 </div>
-                -->
+                @endif
+
                 <form method="POST">
                 @csrf
                     <button type="submit" class="mx-auto my-3 py-2 px-6 bg-accents1-light text-fond transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg">Faire une demande</button>
@@ -68,7 +70,6 @@
         @endauth
 	</section>
 
-	<!-- Mini association profile -->
     <section class="flex flex-col md:my-8 flex-none  md:max-w-[50%] max-[767px]:mx-4 md:mr-6 md:mt-32 py-6">
 		<article class="font-body mx-auto w-full bg-zoning rounded-lg shadow dark:bg-gray-800 my-4">
 			<h3 class="font-grands text-3xl text-center my-2 pt-5 w-full">{{ $animal->nom }}<br>vous attend chez<br>{{ $animal->refuge->nom }}</h3>
@@ -98,7 +99,6 @@
 	<section class="p-4 py-6 block">
 		<h2 class="font-grands text-3xl text-center my-2">Ils vous attendent de patte ferme !</h2>
 
-		<!-- Carousel -->
 		<section id="animal-carousel" class="md:flex md:flex-row relative mx-auto h-auto w-[90%] bg-zoning rounded-lg shadow dark:bg-gray-800">
 
 			<button

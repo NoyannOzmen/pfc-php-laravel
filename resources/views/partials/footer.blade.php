@@ -1,4 +1,3 @@
-    <!-- Back to top Button -->
     <div class="flex-none">
       <a class="to-top mb-12 mr-1 flex flex-col text-xs font-bold text-accents1-light opacity-75" href="#top"> <img class="size-8 place-self-center" src="/icons/top.svg" alt="icone de retour vers le haut"> <p class="to-top-text text-center">Haut<br>de page<br></p></a>
     </div>

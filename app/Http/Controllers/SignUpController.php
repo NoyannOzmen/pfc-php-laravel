@@ -28,6 +28,24 @@ class SignUpController extends Controller
      */
     public function shelter_signup(Request $request): RedirectResponse
     {
+        $request->validate([
+            '_password' => 'bail|required|string',
+            '_confirmation' => 'bail|required|string',
+            //* For testing purposes
+            '_email' => 'bail|required|email',
+            /* '_email' => 'bail|required|email:spoof,rfc,dns', */
+            'nom' => 'bail|required|string',
+            'responsable' => 'bail|required|string',
+            'rue' => 'bail|required|string',
+            'commune' => 'bail|required|string',
+            'code_postal' => ['bail','required','regex:/^(?:0[1-9]|[1-8]\d|9[0-8])\d{3}$/'],
+            'pays' => 'bail|required|string',
+            'telephone' => ['bail','required','regex:/^(0|\+33 )[1-9]([\-. ]?[0-9]{2} ){3}([\-. ]?[0-9]{2})|([0-9]{8})$/'],
+            'siret' => ['bail','required','regex:/^(\d{14}|((\d{3}[ ]\d{3}[ ]\d{3})|\d{9})[ ]\d{5})$/'],
+            'site' => 'nullable|url:http,https',
+            'description' => 'nullable|string',
+        ]);
+
         $plaintextPassword = $request->request->get('_password');
         $plaintextConfirm = $request->request->get('_confirmation');
 
@@ -37,16 +55,6 @@ class SignUpController extends Controller
             );
         }
 
-        $nom = $request->request->get('_nom');
-        $responsable = $request->request->get('_responsable');
-        $rue = $request->request->get('_rue');
-        $commune = $request->request->get('_commune');
-        $code_postal = $request->request->get('_code_postal');
-        $pays = $request->request->get('_pays');
-        $telephone = $request->request->get('_telephone');
-        $siret = $request->request->get('_siret');
-        $site = $request->request->get('_site');
-        $description = $request->request->get('_description');
         $email = $request->request->get('_email');
 
         $user = User::find(['email' => $email]);
@@ -62,19 +70,15 @@ class SignUpController extends Controller
                 'password' => Hash::make($plaintextPassword, ['rounds' => 8]),
             ]);
 
-            $newShelter = Association::create([
-                'nom' => $nom,
-                'responsable' => $responsable,
-                'rue' =>  $rue,
-                'commune' => $commune,
-                'code_postal' =>  $code_postal,
-                'pays' =>  $pays,
-                'telephone' => $telephone,
-                'siret' => $siret,
-                'site' => ($request->request->has("_site")) ? $site : null,
-                'description' => ($request->request->has("_description")) ? $description : null,
-                'utilisateur_id' => $newUser->id,
-            ]);
+            $association = new Association;
+
+            $data = $request->except('_token', '_email', '_password', '_confirmation', 'api_gouv');
+            foreach ($data as $key => $value) {
+                $request->whenHas($key, fn ($value) => $association->$key = $value);
+            }
+            $association->utilisateur_id = $newUser->id;
+
+            $association->save();
 
             event(new Registered($newUser));
 
@@ -97,6 +101,23 @@ class SignUpController extends Controller
      */
     public function foster_signup(Request $request): RedirectResponse
     {
+        $request->validate([
+            '_password' => 'bail|required|string',
+            '_confirmation' => 'bail|required|string',
+            //* For testing purposes
+            '_email' => 'bail|required|email',
+            /* '_email' => 'bail|required|email:spoof,rfc,dns', */
+            'nom' => 'bail|required|string',
+            'prenom' => 'bail|required|string',
+            'telephone' => ['bail','required','regex:/^(0|\+33 )[1-9]([\-. ]?[0-9]{2} ){3}([\-. ]?[0-9]{2})|([0-9]{8})$/'],
+            'hebergement' => 'bail|required|string',
+            'terrain' => 'nullable|string',
+            'rue' => 'bail|required|string',
+            'commune' => 'bail|required|string',
+            'code_postal' => ['bail','required','regex:/^(?:0[1-9]|[1-8]\d|9[0-8])\d{3}$/'],
+            'pays' => 'bail|required|string',
+        ]);
+
         $plaintextPassword = $request->request->get('_password');
         $plaintextConfirm = $request->request->get('_confirmation');
 
@@ -113,41 +134,28 @@ class SignUpController extends Controller
             throw new Error(
                 'Invalid credentials'
             );
-        }
+        } else {
+            $newUser = User::create([
+                'email' => $email,
+                'roles' => json_encode(["ROLE_FOSTER"]),
+                'password' => Hash::make($plaintextPassword, ['rounds' => 8]),
+            ]);
 
-        $newUser = User::create([
-            'email' => $email,
-            'roles' => json_encode(["ROLE_FOSTER"]),
-            'password' => Hash::make($plaintextPassword, ['rounds' => 8]),
-        ]);
+            $famille = new Famille;
 
-        event(new Registered($newUser));
+            $data = $request->except('_token', '_email', '_password', '_confirmation', 'api_gouv');
+            foreach ($data as $key => $value) {
+                $request->whenHas($key, fn ($value) => $famille->$key = $value);
+            }
+            $famille->utilisateur_id = $newUser->id;
 
-        $nom = $request->request->get('_nom');
-        $prenom = $request->request->get('_prenom');
-        $rue = $request->request->get('_rue');
-        $commune = $request->request->get('_commune');
-        $code_postal = $request->request->get('_code_postal');
-        $pays = $request->request->get('_pays');
-        $telephone = $request->request->get('_telephone');
-        $hebergement = $request->request->get('_hebergement');
-        $terrain = $request->request->get('_terrain');
+            $famille->save();
 
-        $newFoster = Famille::create([
-            'prenom' => ($request->request->has("_prenom")) ? $prenom : null,
-            'nom' => $nom,
-            'rue' =>  $rue,
-            'commune' => $commune,
-            'code_postal' =>  $code_postal,
-            'pays' =>  $pays,
-            'telephone' => $telephone,
-            'hebergement'=> $hebergement,
-            'terrain' => ($request->request->has("_terrain")) ? $terrain : null,
-            'utilisateur_id' => $newUser->id
-        ]);
+            event(new Registered($newUser));
 
-        Auth::login($newUser);
+            Auth::login($newUser);
+        };
 
-    return redirect('/famille/inscription');
+    return redirect('/');
     }
 }

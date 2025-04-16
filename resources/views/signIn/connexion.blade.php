@@ -3,8 +3,6 @@
 <main class="justify-self-stretch flex-1">
 	<h2 class="font-grands text-3xl text-center my-2 pt-10">Connexion</h2>
 
-    <!-- <div class="text-center w-full py-2 font-grands font-base text-accents1"> security error message </div> -->
-
 	<section class="pt-10">
 		<div class="font-body mx-auto w-[80%] md:w-[60%] bg-zoning rounded-lg shadow dark:bg-gray-800">
 
@@ -21,9 +19,15 @@
 				<button class="w-[60%] mx-auto my-3 py-2 px-4 bg-accents1-light text-fond transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg" type="submit">Se connecter</button>
 			</form>
 
-                <!-- <div class="flash-notice font-grands font-base text-accents1 text-center">
-                    app flashes notic message
-                </div> -->
+            @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li class="flash-notice font-grands font-base text-accents1 text-center">{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
 
         </div>
 	</section>

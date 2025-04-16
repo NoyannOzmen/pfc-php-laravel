@@ -4,31 +4,31 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
 
 function handleAddTag() {
-    
+
     const addTagBtn = document.getElementById('create-tag');
     const addTagModal =  document.getElementById('create-tags-modal');
     const addTagForm = document.getElementById('create-tags-form');
-    
+
     addTagBtn.addEventListener('click', (event)=>{
         event.preventDefault();
         addTagModal.classList.toggle('hidden');
     })
-    
+
     const closeBtns = document.querySelectorAll('.cancel');
-    
+
     closeBtns.forEach(btn => {
         btn.addEventListener('click',(event)=>{
             event.preventDefault();
-            
+
             addTagModal.classList.toggle('hidden');
             addTagForm.reset();
         })
-        
+
     });
 
     addTagForm.addEventListener('submit', (event)=>{
         event.preventDefault();
-        const selectTagForm = document.getElementById('tags-animal'); 
+        const selectTagForm = document.getElementById('tags-animal');
         selectTagForm.innerHTML='';
 
         data.forEach(tag => {

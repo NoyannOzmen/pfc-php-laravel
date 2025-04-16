@@ -26,7 +26,6 @@
 
       <section id="dahboard-container" class="flex justify-center flex-wrap gap-x-6 gap-y-4 p-6">
 
-       <!-- ANIMAL INFO -->
         <div class="w-60 md:w-auto">
           <h3 class="hidden md:inline font-grands text-3xl text-center my-2 pt-5 w-full">Fiche de suivi d'un animal</h3>
 
@@ -100,7 +99,6 @@
           </div>
         </div>
 
-        <!-- ACCUEILLANT INFOS-->
         @if ($animal->famille)
           <div class="w-60 md:w-auto">
             <h3 class="font-body font-bold mb-4">Famille d'accueil</h3>
@@ -131,7 +129,6 @@
           </div>
         @endif
 
-        <!-- HISTORIQUE DES DEMANDES -->
         @if (count($demandes) > 0)
             <div class="px-4 ">
               <h3 class="font-body font-bold mb-4">Historique des demandes d'accueil</h3>
@@ -161,5 +158,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/dashboardAssoListeAnimal->js') }}"></script>
+<script src="{{ asset('js/dashboardAssoListeAnimal.js') }}"></script>
 @endpush

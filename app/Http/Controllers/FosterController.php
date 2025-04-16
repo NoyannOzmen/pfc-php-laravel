@@ -33,21 +33,21 @@ class FosterController extends Controller
 
         $famille = Famille::findOrFail($userId);
 
-        $nom = $request->request->get('_nom');
-        $prenom = $request->request->get('_prenom');
-        $hebergement = $request->request->get('_hebergement');
-        $terrain = $request->request->get('_terrain');
-        $rue = $request->request->get('_rue');
-        $commune = $request->request->get('_commune');
-        $code_postal = $request->request->get('_code_postal');
+        $request->validate([
+            'nom' => 'bail|required|string',
+            'prenom' => 'bail|required|string',
+            'rue' => 'bail|required|string',
+            'commune' => 'bail|required|string',
+            'code_postal' => ['bail','required','regex:/^(?:0[1-9]|[1-8]\d|9[0-8])\d{3}$/'],
+            'pays' => 'bail|required|string',
+            'hebergement' => 'bail|required|string',
+            'terrain' => 'nullable|string',
+        ]);
 
-        if ($request->has("_nom")) {$famille->nom = $nom;};
-        if ($request->has("_prenom")) {$famille->prenom = $prenom;};
-        if ($request->has("_hebergement")) {$famille->hebergement = $hebergement;};
-        if ($request->has("_terrain")) {$famille->terrain = $terrain;};
-        if ($request->has("_rue")) {$famille->rue = $rue;};
-        if ($request->has("_commune")) {$famille->commune = $commune;};
-        if ($request->has("_$code_postal")) {$famille->code_postal = $code_postal;};
+        $data = $request->except('_token');
+        foreach ($data as $key => $value) {
+            $request->whenHas($key, fn ($value) => $famille->$key = $value);
+        }
 
         $famille->save();
 
@@ -57,17 +57,17 @@ class FosterController extends Controller
     /**
      * Handle account deletion.
      */
-    public function foster_destroy(): RedirectResponse
+    public function foster_destroy(Request $request): RedirectResponse
     {
         $userId = Auth::user()->accueillant->id;
         $user = User::find(Auth::user()->id);
 
         $famille = Famille::findOrFail($userId);
 
-        $requests = Demande::where('famille_id', '=', $userId)->get();
-        if (count($requests) > 0) {
-            foreach ($requests as $request) {
-                $request->delete();
+        $demandes = Demande::where('famille_id', '=', $userId)->get();
+        if (count($demandes) > 0) {
+            foreach ($demandes as $demande) {
+                $demande->delete();
               }
         }
 
@@ -79,10 +79,9 @@ class FosterController extends Controller
             //* Possibly add soft-delete ?
             return redirect('/deconnexion');
         }
-        $message = "Vous accueillez actuellement un ou plusieurs animaux enregistrés sur notre site.
-        Merci de contacter le refuge concerné avant de supprimer votre compte !";
 
-        return back()->with("famille", $famille)->with("message", $message);
+        return back()->with("famille", $famille)->with('error', 'Vous accueillez actuellement un ou plusieurs animaux enregistrés sur notre site.
+        Merci de contacter le refuge concerné avant de supprimer votre compte !');;
     }
 
     /**

@@ -2,7 +2,6 @@
 @section('content')
 <main class="justify-self-stretch flex-1">
 
-  <!-- Menu de recherche -->
   <div class="md:my-3 flex flex-wrap font-body w-full bg-zoning rounded-lg shadow justify-around">
     <form class="text-texte justify-around" method="POST">
       @csrf
@@ -24,7 +23,6 @@
         <div class="col-span-1 mx-auto">
           <h4>Caractéristiques</h4>
 
-          <!-- Choix de l'espèce -->
           <div class="my-2">
             <label for="espece-dropdown-full">Espèce</label>
             <select tabindex=0 class="text-xs block bg-fond" id="espece-dropdown-full" name="_especeDropdownFull">
@@ -35,7 +33,6 @@
             </select>
           </div>
 
-          <!-- Sexe -->
           <div class="my-2">
             <fieldset id="sexe">
               <legend>Sexe</legend>
@@ -45,7 +42,6 @@
             </fieldset>
           </div>
 
-         <!-- Selection Age -->
           <div class="my-2">
             <p>Age :</p>
             <label class=# for="age-min">De&nbsp;</label>
@@ -56,7 +52,6 @@
           </div>
         </div>
 
-        <!-- Sélection Tags -->
         <div class="col-span-1">
           <p>Exclure si :</p>
           @foreach ($tags as $tag)
@@ -69,7 +64,6 @@
 
         <div class="col-span-1">
           <div class="my-2">
-            <!-- Département -->
             <label for="dpt-select">Département</label>
             <select tabindex=0 class="text-xs block bg-fond" id="dpt-select" name="_dptSelect">
             @include('partials.dptSelect')

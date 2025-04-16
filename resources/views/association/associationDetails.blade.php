@@ -36,7 +36,6 @@
   @if (count($pensionnaires) > 0)
     <section class="p-2 block">
       <h2 class="font-grands text-xl text-center my-2 md:md:text-2xl">Ils vous y attendent de patte ferme !</h2>
-      <!-- Carousel -->
 		<section id="animal-carousel" class="md:flex md:flex-row relative mx-auto h-auto w-[90%] bg-zoning rounded-lg shadow dark:bg-gray-800">
 
 			<button

@@ -44,7 +44,6 @@
                 <td class="w-full rounded-xl" colspan="2">
                   <div class="flex flex-wrap p-2 justify-center md:flex-nowrap" >
 
-                    <!-- Partie Animal -->
                     <div class="w-full md:w-1/2">
                       <h3 class="font-body font-bold">Animal</h3>
 
@@ -101,7 +100,6 @@
 
                     <hr class="border-t-accents2 w-2/4 border-t-2 border-solid justify-self-center my-4 md:hidden">
 
-                    <!-- PARTIE FAMILLE -->
                     <div class="w-full md:w-1/2">
                       <h3 class="font-body font-bold mb-4">Famille</h3>
 

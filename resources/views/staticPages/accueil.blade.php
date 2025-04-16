@@ -13,7 +13,6 @@
 
   <section class="p-4 block mx-auto">
     <h2 class="font-grands text-3xl text-center my-2">Ils vous attendent de patte ferme !</h2>
-   <!--  Carousel -->
     <section id="animal-carousel"
 		  class="md:flex md:flex-row relative mx-auto h-auto w-[90%] bg-zoning rounded-lg shadow dark:bg-gray-800">
 

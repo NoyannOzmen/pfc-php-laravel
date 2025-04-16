@@ -29,8 +29,7 @@
        <h3 class="font-grands text-3xl text-center my-2 pt-5 w-full">Suivi de demande pour {{ $animal->nom }}</h3>
         <div class="flex flex-wrap p-2 justify-center md:flex-nowrap">
 
-          <!-- Partie Animal -->
-          <div class="w-full md:w-1/2">
+        <div class="w-full md:w-1/2">
 
             <h4 class="font-body font-bold text-center">Animal</h4>
 
@@ -78,7 +77,7 @@
 
             @if (count($animal->tags) > 0)
               <div class="flex flex-wrap mt-4 px-6 gap-1">
-                @foreach ($tags as $tag)
+                @foreach ($animal->tags as $tag)
                   <p class="group rounded-full block bg-accents1 text-fond text-center text-xs font-semibold py-1 px-2">
                     {{ $tag->nom }}
                     <span class="group-hover:block hidden z-10 bg-accents2-dark text-fond absolute px-2 py-2 text-xs rounded-b-xl rounded-tr-xl">
@@ -93,7 +92,6 @@
 
           <hr class="border-t-accents2 w-2/4 border-t-2 border-solid justify-self-center my-4 md:hidden">
 
-          <!-- PARTIE FAMILLE -->
           <div class="w-full md:w-1/2">
             <h4 class="font-body font-bold mb-4 text-center">Famille</h4>
 
@@ -123,15 +121,15 @@
           </div>
 
         </div>
-        <!-- PARTIE GESTION -->
-         <div class="w-full flex flex-row flex-wrap md:flex-nowrap justify-center gap-2 items-center">
+
+        <div class="w-full flex flex-row flex-wrap md:flex-nowrap justify-center gap-2 items-center">
           <h4 class="font-body font-bold text-center">Statut de la demande :</h4>
           <p id="request-status" class="font-body text-center">{{ $request->statut_demande }}</p>
-          <form class="w-[80%] md:w-[20%]" action="association/profil/demandes/{ request->id }}/accept" method="POST">
+          <form class="w-[80%] md:w-[20%]" action="{{ $request->id }}/accept" method="POST">
           @csrf
             <button type="submit" class="bg-accents1 w-full m-3 py-2 px-4 text-fond transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg">Accepter</button>
           </form>
-          <form class="w-[80%] md:w-[20%]" action="association/profil/demandes/{ request->id }}/deny" method="POST">
+          <form class="w-[80%] md:w-[20%]" action="{{ $request->id }}/deny" method="POST">
           @csrf
             <button type="submit" class="bg-accents2-dark w-full m-3 py-2 px-4 text-fond transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg">Refuser</button>
           </form>

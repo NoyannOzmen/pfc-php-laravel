@@ -25,6 +25,11 @@ class LoginController extends Controller
      */
     public function login(Request $request): RedirectResponse
     {
+        $request->validate([
+            '_username' => 'bail|required|string',
+            '_password' => 'bail|required|string',
+        ]);
+
         $email = $request->request->get("_username");
         $password = $request->request->get("_password");
 

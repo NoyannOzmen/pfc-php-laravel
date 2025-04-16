@@ -27,6 +27,16 @@
 
         <form class="grid grid-cols-1 my-6 mx-6 justify-center lg:flex-none lg:mx-2 lg:grid lg:grid-cols-3 lg:px-2 xl:grid-cols-3 xl:p-10" name="create_animal" method="POST">
         @csrf
+            @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li class="flash-notice font-grands font-base text-accents1 text-center">{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+
           <input type="hidden" name="create_animal" value="create_animal">
           <fieldset class="flex flex-wrap justify-center content-start gap-x-4">
 
@@ -90,7 +100,7 @@
 
                 @foreach ($tags as $tag)
                   <div class="flex gap-x-1.5 w-full">
-                    <input type="checkbox" id="tag_{{ $tag->id }}" name="_tag" value="{{ $tag->id }}" class="leading-3 size-6"/>
+                    <input type="checkbox" id="tag_{{ $tag->id }}" name="_tag[]" value="{{ $tag->id }}" class="leading-3 size-6"/>
                     <label for="_tag" class="block font-grands text-xs leading-3">{{ $tag->nom }}</label>
                   </div>
                 @endforeach
@@ -100,6 +110,12 @@
               <div class="flex justify-center">
                 <button id="create-tag" type="button" class="self-center hover:bg-accents1-dark rounded-full hover:underline bg-accents1-light text-center font-grands text-fond font-semibold text-base py-0.5 px-4">Créer un tag</button>
               </div>
+
+              @if(session('error'))
+                <div class="alert alert-danger flex justify-center">
+                    <p class="flash-notice font-grands font-base text-accents1 text-center">{{ session('error') }}</p>
+                </div>
+              @endif
             </div>
 
           </fieldset>
@@ -118,10 +134,9 @@
   </div>
 </main>
 
-<!-- TAG CREATION MODAL -->
 <div id="create-tags-modal" class="hidden justify-center content-center fixed bg-texte/20 inset-0">
 
-  <div class="self-center bg-zoning p-6 rounded-lg">
+  <div class="self-center w-1/3 mx-auto bg-zoning p-6 rounded-lg">
     <div class="flex justify-between">
       <h3 class="font-grands text-lg font-extrabold mb-4">Ajouter un tag</h3>
       <span class="cancel material-symbols-outlined text-texte cursor-pointer">
@@ -130,6 +145,15 @@
     </div>
     <form id="create-tags-form" name="create_tag" method="POST">
     @csrf
+        @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li class="flash-notice font-grands font-base text-accents1 text-center">{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
       <input type="hidden" name="create_tag" value="create_tag">
       <fieldset class="mb-2">
         <label for="name_tag" class="block text-texte font-grands font-bold text-base">Nom du Tag</label>
@@ -148,10 +172,8 @@
     </form>
   </div>
 </div>
-<!-- END MODALE -->
-
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/dashboardAssoCreate$Tag->js') }}"></script>
+<script src="{{ asset('js/dashboardAssoCreateTag.js') }}"></script>
 @endpush

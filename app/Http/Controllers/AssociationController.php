@@ -7,7 +7,6 @@ use App\Models\Espece;
 use App\Models\Tag;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class AssociationController extends Controller
 {
@@ -26,7 +25,11 @@ class AssociationController extends Controller
     {
         $query =  Association::where('nom', 'IS NOT', null);
 
-        /* $species = $request->request->get('_especes'); */
+        $request->validate([
+            '_shelterNom' => 'string',
+        ]);
+
+        $species = $request->input('_especes');
         $dptFull = $request->request->get('_dptSelectFull');
         $dptSmall = $request->request->get('_dptSelectSmall');
         $name = $request->request->get('_shelterNom');
@@ -43,9 +46,11 @@ class AssociationController extends Controller
             $query->where('code_postal', 'LIKE', "$dptFull%");
         };
 
-        /* if ($species) {
-            $query->whereIn('pensionnaires.espece.nom', $species);
-        }; */
+        if (count($species) > 0) {
+
+                $query->whereIn('pensionnaires.espece.nom', $species);
+
+        }
 
         $searchedShelters = $query->get();
 

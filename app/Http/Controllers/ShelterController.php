@@ -37,27 +37,23 @@ class ShelterController extends Controller
 
         $association = Association::findOrFail($userId);
 
-        $nom = $request->request->get('_nom');
-        $responsable = $request->request->get('_responsable');
-        $rue = $request->request->get('_rue');
-        $commune = $request->request->get('_commune');
-        $code_postal = $request->request->get('_code_postal');
-        $pays = $request->request->get('_pays');
-        $telephone = $request->request->get('_telephone');
-        $siret = $request->request->get('_siret');
-        $site = $request->request->get('_site');
-        $description = $request->request->get('_description');
+        $request->validate([
+            'nom' => 'bail|required|string',
+            'responsable' => 'bail|required|string',
+            'rue' => 'bail|required|string',
+            'commune' => 'bail|required|string',
+            'code_postal' => ['bail','required','regex:/^(?:0[1-9]|[1-8]\d|9[0-8])\d{3}$/'],
+            'pays' => 'bail|required|string',
+            'telephone' => ['bail','required','regex:/^(0|\+33 )[1-9]([\-. ]?[0-9]{2} ){3}([\-. ]?[0-9]{2})|([0-9]{8})$/'],
+            'siret' => ['bail','required','regex:/^(\d{14}|((\d{3}[ ]\d{3}[ ]\d{3})|\d{9})[ ]\d{5})$/'],
+            'site' => 'nullable|url:http,https',
+            'description' => 'nullable|string',
+        ]);
 
-        if ($request->has("_nom")) {$association->nom = $nom;};
-        if ($request->has("_responsable")) {$association->responsable = $responsable;};
-        if ($request->has("_rue")) {$association->rue = $rue;};
-        if ($request->has("_commune")) {$association->commune = $commune;};
-        if ($request->has("_code_postal")) {$association->code_postal = $code_postal;};
-        if ($request->has("_pays")) {$association->pays = $pays;};
-        if ($request->has("_telephone")) {$association->telephone = $telephone;};
-        if ($request->has("_siret")) {$association->siret = $siret;};
-        if ($request->has("_site")) {$association->site = $site;};
-        if ($request->has("_description")) {$association->description = $description;};
+        $data = $request->except('_token');
+        foreach ($data as $key => $value) {
+            $request->whenHas($key, fn ($value) => $association->$key = $value);
+        }
 
         $association->save();
 
@@ -67,7 +63,7 @@ class ShelterController extends Controller
     /**
      * Handle account deletion.
      */
-    public function shelter_destroy(): RedirectResponse
+    public function shelter_destroy(Request $request): RedirectResponse
     {
         $userId = Auth::user()->refuge->id;
         $user = User::find(Auth::user()->id);
@@ -81,11 +77,10 @@ class ShelterController extends Controller
             $user->delete();
             //* Possibly add soft-delete ?
             return redirect('/deconnexion');
-        }
-        $message = 'Vous accueillez actuellement un ou plusieurs animaux enregistrés sur notre site.
-            Merci de contacter un administrateur afin de supprimer votre compte !';
+        };
 
-        return back()->with("association", $association)->with("message", $message);
+        return back()->with("association", $association)->with('error', 'Vous accueillez actuellement un ou plusieurs animaux enregistrés sur notre site.
+            Merci de contacter un administrateur afin de supprimer votre compte !');
     }
 
     /**
@@ -113,14 +108,14 @@ class ShelterController extends Controller
             'file' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
         ]);
 
-        $fileName = $request->file('file')->getClientOriginalName();
+        $fileName = $request->file('file')->hashName();
         $path = $request->file('file')->storePubliclyAs(
             'images/animaux',
             $fileName,
             'uploads'
         );
 
-        $extension = $request->file('file')->getClientOriginalExtension();
+        $extension = $request->file('file')->extension();
         if(in_array($extension,["jpeg","jpg","png","webp","gif"]))
         {
             $webp = public_path().'/'.$path;
@@ -130,7 +125,7 @@ class ShelterController extends Controller
             unlink($webp);
             imagewebp($im, $new_webp, 50);
 
-            $image = new Media();
+            $image = new Media;
             $image->url = '/images/animaux/' . preg_replace('"\.(jpg|jpeg|png|gif|webp)$"', '.webp', $fileName);
             $image->ordre = 1;
             $image->association_id = $userId;
@@ -140,8 +135,7 @@ class ShelterController extends Controller
         return redirect("association/profil/logo")->with("association", $association);
     }
 
-    //* ANIMAL RELATED METHODS
-
+    //* Animals
     /*.
      * Display Sheltered animals.
      */
@@ -194,14 +188,14 @@ class ShelterController extends Controller
             'file' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
         ]);
 
-        $fileName = $request->file('file')->getClientOriginalName();
+        $fileName = $request->file('file')->hashName();
         $path = $request->file('file')->storePubliclyAs(
             'images/animaux',
             $fileName,
             'uploads'
         );
 
-        $extension = $request->file('file')->getClientOriginalExtension();
+        $extension = $request->file('file')->extension();
         if(in_array($extension,["jpeg","jpg","png","webp","gif"])){
             $webp = public_path().'/'.$path;
             $im = imagecreatefromstring(file_get_contents($webp));
@@ -210,14 +204,14 @@ class ShelterController extends Controller
             unlink($webp);
             imagewebp($im, $new_webp, 50);
 
-            $newPic = new Media();
+            $newPic = new Media;
             $newPic->url = '/images/animaux/' . preg_replace('"\.(jpg|jpeg|png|gif|webp)$"', '.webp', $fileName);
             $newPic->ordre = 1;
             $newPic->animal_id = $id;
             $newPic->save();
         };
 
-        return redirect("association/profil/animaux/{animalId}")->with("animalId", $id);
+        return back()->with("id", $id);
     }
 
     /**
@@ -244,68 +238,80 @@ class ShelterController extends Controller
         $tagForm = $request->request->get('create_tag');
 
         if ($request->has($animalForm)) {
+            $request->validate([
+                "_nom_animal" => 'bail|required|string',
+                "_sexe_animal" => 'bail|required|string',
+                "_age_animal" => 'bail|required|integer',
+                "_espece_animal" => 'bail|required|integer',
+                "_race_animal" => 'string',
+                "_couleur_animal" => 'bail|required|string',
+                "_description_animal" => 'bail|required|string',
+            ]);
+
             $name = $request->request->get('_nom_animal');
             $sex = $request->request->get('_sexe_animal');
             $age = $request->request->get('_age_animal');
             $species = $request->request->get('_espece_animal');
-            $espece = Espece::where($species);
             $race = $request->request->get('_race_animal');
             $colour = $request->request->get('_couleur_animal');
             $description = $request->request->get('_description_animal');
 
-            $animalTags = $request->input('_tag');
-            foreach($animalTags as $tag) {
-                $tag = Tag::where($tag);
-                $tagsToAdd[] = $tag;
-            };
+            $newAnimal = new Animal;
 
-            $newAnimal = new Animal();
             $newAnimal->nom = $name;
             $newAnimal->sexe = $sex;
             $newAnimal->age = $age;
-            $newAnimal->espece = $espece;
+            $newAnimal->espece_id = $species;
             if ($race) {
                 $newAnimal->race = $race;
-            }
+            };
             $newAnimal->couleur = $colour;
             $newAnimal->description = $description;
             $newAnimal->association_id = $userId;
-            if (count($tagsToAdd) > 0) {
-                foreach ($tagsToAdd as $tagToAdd) {
-                    $tag = AnimalTag::where($tagToAdd);
-                    $newAnimal->tags = $tag;
-                }
-            };
-            $newAnimal->statut('En Refuge');
+            $newAnimal->statut = 'En Refuge';
+
             $newAnimal->save();
 
-            $animalId = $newAnimal->refuge->id;
-            $newPhoto = new Media();
+            $animalTags = $request->input('_tag');
+
+            if (count($animalTags) > 0) {
+                foreach($animalTags as $AniTag) {
+                    $newTag = new AnimalTag();
+                    $newTag->animal_id = $newAnimal->id;
+                    $newTag->tag_id = $AniTag;
+                }
+            }
+
+            $newPhoto = new Media;
             $newPhoto->ordre = 1;
-            $newPhoto->animal_id = $animalId;
+            $newPhoto->animal_id = $newAnimal->id;
             $newPhoto->url = '/images/animal_empty.webp';
             $newPhoto->save();
 
-            $message = "Profil animal créé avec succès";
+            return back()->with('error', 'Profil animal créé avec succès');
         }
 
         if ($request->has($tagForm)) {
+            $request->validate([
+                "_name_tag" => 'required|string',
+                "_desc_tag" => 'required|string'
+            ]);
+
             $tagName = $request->request->get('_name_tag');
             $tagDesc = $request->request->get('_desc_tag');
 
-            $newTag = new Tag();
+            $newTag = new Tag;
             $newTag->nom = $tagName;
             $newTag->description = $tagDesc;
             $newTag->save();
 
-            $message = "Nouveau tag créé avec succès";
+            return back()->with('error', 'Nouveau tag créé avec succès');
         }
 
-        return redirect("association/profil/animaux/nouveau-profil")->with("message", $message);
+        return redirect("association/profil/animaux/nouveau-profil");
     }
 
-
-    //* REQUESTS RELATED METHODS
+    //* Requests
     /**
      * Display current pending requests
      */
@@ -349,9 +355,15 @@ class ShelterController extends Controller
         $request->statut_demande = "Validée";
         $request->save();
 
-        //!TODO SET OTHERS TO DENIED
+        $animal = Animal::find($request->animal_accueillable->id);
 
-        return redirect("association/demandes/$demandeId")->with("association", $association)->with("request", $request);
+        $otherRequests = Demande::where('animal_id', '=', $animal->id)->where('statut_demande', '=', 'En attente')->get();
+        foreach($otherRequests as $other) {
+            $other->statut_demande = 'Refusée';
+            $other->save();
+        }
+
+        return redirect("association/profil/demandes/$demandeId")->with("association", $association)->with("request", $request);
     }
 
     /**

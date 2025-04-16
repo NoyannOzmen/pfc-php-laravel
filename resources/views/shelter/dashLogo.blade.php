@@ -42,7 +42,7 @@
 
         <div class="flex flex-col justify-center">
           <h3 class="font-body text-2xl text-center">Votre Logo actuel</h3>
-          @if (empty($association->images_association))
+          @if (count($association->images_association) == 0)
             <img class="w-[40%] mx-auto rounded-lg" src="/images/shelter_empty.webp" alt="">
           @else
             <img class="w-[40%] mx-auto rounded-lg" src="{{ $association->images_association[0]->url }}" alt="">

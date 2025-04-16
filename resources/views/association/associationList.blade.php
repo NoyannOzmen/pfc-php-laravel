@@ -2,7 +2,6 @@
 @section('content')
 <main class="justify-self-stretch flex-1">
 
-  <!-- Menu de recherche -->
   <div class="md:my-3 flex flex-wrap font-body w-full bg-zoning rounded-lg shadow justify-around">
     <form class="text-texte justify-around" method="POST">
       @csrf
@@ -20,7 +19,6 @@
         <h3 class="col-span-3 font-grands text-3xl text-center my-2">Rechercher une association</h3>
         <div class="col-span-1 mx-auto">
           <fieldset class="mx-auto p-2 my-2">
-            <!-- Nom du refuge -->
             <label class=# for="shelter-nom">Nom du refuge</label>
             <input class="text-xs block bg-fond" type="text" id="shelter-nom" name="_shelterNom" placeholder="--Entrez un nom--">
           </fieldset>
@@ -31,8 +29,8 @@
             <legend>Animaux</legend>
             @foreach ($especes as $espece)
               <div>
-                <label class=# for="{{ $espece->nom }}">{{ $espece->nom }}</label>
-                <input class=# type="checkbox" name="_espece[]" value="{{ $espece->nom }}"/>
+                <label for="_espece[]">{{ $espece->nom }}</label>
+                <input type="checkbox" name="_espece[]" id="{{ $espece->nom}}" value="{{ $espece->nom }}"/>
               </div>
             @endforeach
           </fieldset>
@@ -40,12 +38,10 @@
 
         <div class="col-span-1">
           <fieldset class="mx-auto p-2 my-2">
-
-            <!-- Département -->
-            <label for="dpt-select-full">Département</label>
-            <select tabindex=0 class="text-xs block bg-fond" id="dpt-select-full" name="_dptSelectFull">
-            @include ('partials.dptSelect')
-            </select>
+              <label for="dpt-select-full">Département</label>
+              <select tabindex=0 class="text-xs block bg-fond" id="dpt-select-full" name="_dptSelectFull">
+                @include ('partials.dptSelect')
+              </select>
           </fieldset>
         </div>
 

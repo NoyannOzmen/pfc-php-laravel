@@ -17,11 +17,21 @@
       <section class="flex flex-wrap justify-center" id="dashboard-container">
         <h3 class="font-grands text-3xl text-center my-2 pt-5 w-full">Mon profil</h3>
 
-        <!--
-        <div class="flash-notice font-grands font-base text-accents1 text-center">
-          app flash messages
+        @if ($errors->any())
+        <div class="alert alert-danger">
+          <ul>
+            @foreach ($errors->all() as $error)
+                <li class="flash-notice font-grands font-base text-accents1 text-center">{{ $error }}</li>
+            @endforeach
+          </ul>
         </div>
-        -->
+        @endif
+
+        @if(session('error'))
+        <div class="alert alert-danger">
+          <p class="flash-notice font-grands font-base text-accents1 text-center">{{ session('error') }}</p>
+        </div>
+        @endif
 
         <form class="flex flex-col flex-wrap content-center justify-around text-texte w-full" action="" method="POST">
         @csrf
@@ -30,11 +40,11 @@
 
             <div class="mx-auto p-2">
               <label class="text-center w-full" for="prenom">Prénom</label>
-              <input class="block w-full" type="text" id="prenom" name="_prenom" value="{{ $famille->prenom }}" disabled>
+              <input class="block w-full" type="text" id="prenom" name="prenom" value="{{ $famille->prenom }}" disabled>
             </div>
             <div class="mx-auto p-2">
               <label class="text-center w-full" for="nom">Nom</label>
-              <input class="block w-full" type="text" id="nom" name="_nom" value="{{ $famille->nom }}" disabled>
+              <input class="block w-full" type="text" id="nom" name="nom" value="{{ $famille->nom }}" disabled>
             </div>
           </fieldset>
 
@@ -43,27 +53,27 @@
 
               <div class="mx-auto p-2">
                 <label class="text-center w-full" for="hebergement">Type</label>
-                <input class="block w-full" type="text" id="hebergement" name="_hebergement" value="{{ $famille->hebergement }}" disabled>
+                <input class="block w-full" type="text" id="hebergement" name="hebergement" value="{{ $famille->hebergement }}" disabled>
               </div>
 
               <div class="mx-auto p-2">
                 <label class="text-center w-full" for="terrain">Terrain</label>
-                <input class="block w-full" type="text" id="terrain" name="_terrain" value="{{ $famille->terrain }}" disabled>
+                <input class="block w-full" type="text" id="terrain" name="terrain" value="{{ $famille->terrain }}" disabled>
               </div>
 
               <div class="mx-auto p-2">
                 <label class="text-center w-full" for="rue">Rue</label>
-                <input class="block w-full" type="text" id="rue" name="_rue" value="{{ $famille->rue }}" disabled>
+                <input class="block w-full" type="text" id="rue" name="rue" value="{{ $famille->rue }}" disabled>
               </div>
 
               <div class="mx-auto p-2">
                 <label class="text-center w-full" for="commune">Commune</label>
-                <input class="block w-full" type="text" id="commune" name="_commune" value="{{ $famille->commune }}" disabled>
+                <input class="block w-full" type="text" id="commune" name="commune" value="{{ $famille->commune }}" disabled>
               </div>
 
               <div class="mx-auto p-2">
                 <label class="text-center w-full" for="code_postal">Code Postal</label>
-                <input class="block w-full" type="text" id="code_postal" name="_code_postal" pattern="^(?:0[1-9]|[1-8]\d|9[0-8])\d{3}$" value="{{ $famille->code_postal }}" disabled>
+                <input class="block w-full" type="text" id="code_postal" name="code_postal" pattern="^(?:0[1-9]|[1-8]\d|9[0-8])\d{3}$" value="{{ $famille->code_postal }}" disabled>
               </div>
           </fieldset>
 

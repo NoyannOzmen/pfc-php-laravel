@@ -102,5 +102,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/dashboardAssoListeAnimal->js') }}"></script>
+<script src="{{ asset('js/dashboardAssoListeAnimal.js') }}"></script>
 @endpush

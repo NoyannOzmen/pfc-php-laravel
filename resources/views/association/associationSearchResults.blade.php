@@ -2,7 +2,6 @@
 @section('content')
 <main class="justify-self-stretch flex-1">
 
-  <!-- Menu de recherche -->
   <div class="md:my-3 flex flex-wrap font-body w-full bg-zoning rounded-lg shadows justify-around">
     @if (empty($searchedShelters))
       <h3 class="font-grands text-2xl w-full my-2 text-center">Aucun refuge ne correspond à votre recherche</h3>

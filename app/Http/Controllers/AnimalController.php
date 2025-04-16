@@ -7,6 +7,7 @@ use App\Models\Demande;
 use App\Models\Espece;
 use App\Models\Tag;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,7 +18,8 @@ class AnimalController extends Controller
      */
     public function displayAll(): View
     {
-        return view('animaux/animalList', ['animals' => Animal::all(), 'especes' => Espece::all(), 'tags' => Tag::all()]);
+        $animals = Animal::where('statut', 'En refuge')->get();
+        return view('animaux/animalList', ['animals' => $animals, 'especes' => Espece::all(), 'tags' => Tag::all()]);
     }
 
     /**
@@ -25,15 +27,20 @@ class AnimalController extends Controller
      */
     public function getSearched(Request $request): View
     {
-        $query =  Animal::where('statut', 'En refuge');
+        $query = Animal::where('statut', 'En refuge');
+
+        $request->validate([
+            'minAge' => 'integer',
+            'maxAge' => 'integer'
+        ]);
 
         $speciesFull = $request->request->get('_especeDropdownFull');
         $speciesSmall = $request->request->get('_especeDropdownSmall');
         $sexe = $request->request->get('_sexe');
         $minAge = $request->request->get('_minAge');
         $maxAge = $request->request->get('_maxAge');
-        /* $dpt = $request->request->get('_dptSelect'); */
-        /* $tags = $request->request->get('_tags'); */
+        $dpt = $request->request->get('_dptSelect');
+        $tags = $request->input('_tags');
 
         if ($request->has('_especeDropdownSmall')) {
             $query->where('espece_id', "$speciesSmall");
@@ -55,13 +62,15 @@ class AnimalController extends Controller
             $query->where('age', '<', "$maxAge");
         };
 
-        /* if ($request->has('_dptSelect'))  {
+        if ($request->has('_dptSelect'))  {
             $query->where('refuge.code_postal', 'LIKE', "$dpt%");
-        }; */
+        };
 
-        /* if ($tags = $request->has('_tags')) {
-            $query->where('tags.nom', 'NOT IN', $tags);
-        }; */
+        if ($request->has('_tags[]') && count($tags) > 0) {
+
+                $query->whereNotIn('tags.nom', $tags);
+
+        }
 
         $searchedAnimals = $query->get();
 
@@ -80,24 +89,27 @@ class AnimalController extends Controller
     /**
      * [LOGGED USER] Create a new foster request
      */
-    public function make_request($id): View
+    public function make_request($id, Request $request): RedirectResponse
     {
         $animal = Animal::findOrFail($id);
 
         $user = Auth::user()->accueillant->id;
 
-        $request = Demande::firstOrCreate(
-            ['animal_id' => $animal->id],
-            ['famille_id' => $user],
-            ['statut_demande' => 'En attente', 'date_debut' => date('Y/m/d'), 'date_fin' => date('Y/m/d', strtotime('+1 year'))]
-        );
+        $demande = Demande::where('animal_id', '=', $animal->id)->where('famille_id', '=', $user)->first();
 
-        if ($request->exists) {
-            $message = 'Votre demande a bien été prise en compte !';
+        if (!$demande) {
+            $newRequest = new Demande;
+            $newRequest->animal_id = $animal->id;
+            $newRequest->famille_id = $user;
+            $newRequest->statut_demande = 'En attente';
+            $newRequest->date_debut = date('Y/m/d');
+            $newRequest->date_fin = date('Y/m/d', strtotime('+1 year'));
+
+            $newRequest->save();
+            return back()->with('animal', $animal)->with('error', 'Votre demande a bien été prise en compte !');
+
         } else {
-            $message = 'Vous avez déjà effectué une demande pour cet animal !';
+            return back()->with('animal', $animal)->with('error', 'Vous avez déjà effectué une demande pour cet animal !');
         }
-
-        return view('animaux/animalDetails', ['animal' => $animal, 'notice' => $message]);
     }
 }

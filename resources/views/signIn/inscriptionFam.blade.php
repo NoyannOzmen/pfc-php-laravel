@@ -7,19 +7,25 @@
 
     <form class="flex flex-col flex-wrap content-center justify-around text-texte" method="POST">
     @csrf
-        <!-- <div class="flash-notice font-grands font-base text-accents1 text-center">
-            app flash notice message
-        </div> -->
+        @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li class="flash-notice font-grands font-base text-accents1 text-center">{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
 
       <fieldset class="font-body rounded-lg shadow my-2 py-5">
         <legend class="font-bold text-lg font-grands text-center">Vos informations</legend>
         <div class="mx-auto p-2">
           <label class="text-center w-full" for="firstname">Prénom</label>
-          <input class="block bg-fond w-full" type="text" id="firstname" name="_prenom" placeholder="Charlotte" required>
+          <input class="block bg-fond w-full" type="text" id="firstname" name="prenom" placeholder="Charlotte" required>
         </div>
         <div class="mx-auto p-2">
           <label class="text-center w-full" for="nom">Nom</label>
-          <input class="block bg-fond w-full" type="text" id="nom" name="_nom" placeholder="Cripan" required>
+          <input class="block bg-fond w-full" type="text" id="nom" name="nom" placeholder="Cripan" required>
         </div>
         <div class="mx-auto p-2">
           <label class="text-center w-full" for="email">Email</label>
@@ -27,7 +33,7 @@
         </div>
         <div class="mx-auto p-2">
           <label class="text-center w-full" for="telephone">N° telephone</label>
-          <input class="block bg-fond w-full" type="tel" id="telephone" name="_telephone" pattern="^(0|\+33 )[1-9]([-. ]?[0-9]{2} ){3}([-. ]?[0-9]{2})|([0-9]{8})$" placeholder="01 23 45 67 89">
+          <input class="block bg-fond w-full" type="tel" id="telephone" name="telephone" pattern="^(0|\+33 )[1-9]([-. ]?[0-9]{2} ){3}([-. ]?[0-9]{2})|([0-9]{8})$" placeholder="01 23 45 67 89">
         </div>
       </fieldset>
 
@@ -35,7 +41,6 @@
 
         <legend class="font-bold text-lg font-grands text-center">Votre capacité d'hébergement</legend>
 
-        <!-- API Adresse -->
         <div id="api-container" class="mx-auto p-2 relative mb-3">
           <label class="text-center w-full" for="api-gouv">Adresse&nbsp;<span class="italic font-semibold">(Remplissage Automatique)</span></label>
           <input class="block bg-fond w-full" type="text" id="api-gouv" name="api_gouv" placeholder="Entrez votre adresse">
@@ -43,35 +48,34 @@
           </div>
         </div>
 
-        <!-- Hébergement -->
         <div class="mx-auto p-2">
           <label class="text-center w-full" for="hebergement">Type d'hébergement</label>
-          <input class="block bg-fond w-full" type="text" id="hebergement" name="_hebergement" placeholder="Maison" required>
+          <input class="block bg-fond w-full" type="text" id="hebergement" name="hebergement" placeholder="Maison" required>
         </div>
-        <!-- Terrain -->
+
         <div class="mx-auto p-2">
           <label class="text-center w-full" for="terrain">Type de terrain</label>
-          <input class="block bg-fond w-full" type="text" id="terrain" name="_terrain" placeholder="Jardin de 100m²">
+          <input class="block bg-fond w-full" type="text" id="terrain" name="terrain" placeholder="Jardin de 100m²">
         </div>
-        <!-- Adresse -->
+
         <div class="mx-auto p-2">
           <label class="text-center w-full" for="rue">Rue</label>
-          <input class="block bg-fond w-full" type="text" id="rue" name="_rue" placeholder="45, rue de la Boustifaille" required>
+          <input class="block bg-fond w-full" type="text" id="rue" name="rue" placeholder="45, rue de la Boustifaille" required>
         </div>
-        <!-- Ville -->
+
         <div class="mx-auto p-2">
           <label class="text-center w-full" for="commune">Ville</label>
-          <input class="block bg-fond w-full" type="text" id="commune" name="_commune" placeholder="Paris" required>
+          <input class="block bg-fond w-full" type="text" id="commune" name="commune" placeholder="Paris" required>
         </div>
-        <!-- Code Postal -->
+
         <div class="mx-auto p-2">
           <label class="text-center w-full" for="code_postal">Code Postal</label>
-          <input class="block bg-fond w-full border-" type="text" id="code_postal" name="_code_postal" pattern="^(?:0[1-9]|[1-8]\d|9[0-8])\d{3}$" placeholder="75020" required>
+          <input class="block bg-fond w-full border-" type="text" id="code_postal" name="code_postal" pattern="^(?:0[1-9]|[1-8]\d|9[0-8])\d{3}$" placeholder="75020" required>
         </div>
-        <!-- Pays -->
+
         <div class="mx-auto p-2">
           <label class="text-center w-full" for="pays">Pays</label>
-          <input class="block bg-fond w-full" type="text" id="pays" name="_pays" placeholder="France" required>
+          <input class="block bg-fond w-full" type="text" id="pays" name="pays" placeholder="France" required>
         </div>
       </fieldset>
 
@@ -86,8 +90,6 @@
           <input class="block bg-fond w-full" type="password" id="confirmation" name="_confirmation" placeholder="*********" autocomplete="new-password" required>
         </div>
       </fieldset>
-      <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
-			<input type="hidden" name="_target_path" value="/">
       <button class="w-[60%] mx-auto my-3 py-2 px-4 bg-accents1-light text-fond transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg" type="submit">Valider votre inscription</button>
 
     </form>
