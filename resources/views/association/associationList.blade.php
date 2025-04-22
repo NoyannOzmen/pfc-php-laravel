@@ -30,7 +30,7 @@
             @foreach ($especes as $espece)
               <div>
                 <label for="_espece[]">{{ $espece->nom }}</label>
-                <input type="checkbox" name="_espece[]" id="{{ $espece->nom}}" value="{{ $espece->nom }}"/>
+                <input type="checkbox" name="_espece[]" id="{{ $espece->nom}}" value="{{ $espece->id }}"/>
               </div>
             @endforeach
           </fieldset>

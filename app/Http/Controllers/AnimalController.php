@@ -27,7 +27,7 @@ class AnimalController extends Controller
      */
     public function getSearched(Request $request): View
     {
-        $query = Animal::where('statut', 'En refuge');
+        $query = Animal::where('statut', 'En refuge')->with('tags');
 
         $request->validate([
             'minAge' => 'integer',
@@ -63,18 +63,22 @@ class AnimalController extends Controller
         };
 
         if ($request->has('_dptSelect'))  {
-            $query->where('refuge.code_postal', 'LIKE', "$dpt%");
+            $query->whereHas('refuge', function($q) use ($dpt) {
+                $q->where('code_postal', 'LIKE', "$dpt%");
+            });
         };
 
-        if ($request->has('_tags[]') && count($tags) > 0) {
-
-                $query->whereNotIn('tags.nom', $tags);
-
+        //! Returns only the first result for now
+        if ($request->has('_tags') && count($tags) > 0) {
+            $query->whereHas('tags', function($q) use ($tags) {
+                $q->whereNotIn('tag.nom', $tags)->orWhere('tag.nom', '!=', null);
+            });
         }
 
         $searchedAnimals = $query->get();
+        $qr = $query->toSql();
 
-        return view('animaux/animalSearchResults', ['searchedAnimals' => $searchedAnimals]);
+        return view('animaux/animalSearchResults', ['searchedAnimals' => $searchedAnimals, 'qr' => $qr, 'tags' => $tags]);
     }
 
 

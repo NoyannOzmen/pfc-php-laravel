@@ -57,7 +57,7 @@
           @foreach ($tags as $tag)
             <div>
               <label class=# for="{{ $tag->nom }}">{{ $tag->nom }}</label>
-              <input class=# type="checkbox" name="_tag[]" id="{{ $tag->nom }}" value="{{ $tag->nom }}"/>
+              <input class=# type="checkbox" name="_tags[]" id="{{ $tag->nom }}" value="{{ $tag->nom }}"/>
             </div>
           @endforeach
         </div>

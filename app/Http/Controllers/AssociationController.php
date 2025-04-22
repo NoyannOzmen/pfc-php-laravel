@@ -25,31 +25,31 @@ class AssociationController extends Controller
     {
         $query =  Association::where('nom', 'IS NOT', null);
 
-        $request->validate([
-            '_shelterNom' => 'string',
-        ]);
-
-        $species = $request->input('_especes');
+        $species = $request->input('_espece');
         $dptFull = $request->request->get('_dptSelectFull');
         $dptSmall = $request->request->get('_dptSelectSmall');
         $name = $request->request->get('_shelterNom');
 
-        if ($name) {
+        if ($request->has($name)) {
+            $request->validate([
+                '_shelterNom' => 'string',
+            ]);
             $query->where('nom', 'LIKE' , "%$name%");
         };
 
-        if ($dptSmall)  {
+        if ($request->has($dptSmall))  {
             $query->where('code_postal', 'LIKE', "$dptSmall%");
         };
 
-        if ($dptFull)  {
+        if ($request->has($dptFull))  {
             $query->where('code_postal', 'LIKE', "$dptFull%");
         };
 
-        if (count($species) > 0) {
-
-                $query->whereIn('pensionnaires.espece.nom', $species);
-
+        //! Returns only the first result for now
+        if ($request->has('_espece') && count($species) > 0) {
+            $query->whereHas('pensionnaires', function($q) use ($species) {
+                $q->whereIn('espece_id', $species);
+            });
         }
 
         $searchedShelters = $query->get();
