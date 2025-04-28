@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 <main class="justify-self-stretch flex-1">
-
+{{ dump($qr)}}
   <div class="md:my-3 flex flex-wrap font-body w-full bg-zoning rounded-lg shadow justify-around">
     @if (count($searchedAnimals) > 0)
       <h3 class="font-grands text-2xl w-full my-2 text-center">Résultats de votre recherche</h3>

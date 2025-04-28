@@ -71,7 +71,7 @@ class AnimalController extends Controller
         //! Returns only the first result for now
         if ($request->has('_tags') && count($tags) > 0) {
             $query->whereHas('tags', function($q) use ($tags) {
-                $q->whereNotIn('tag.nom', $tags)->orWhere('tag.nom', '!=', null);
+                $q->whereNotIn('nom', $tags)->orWhere('nom', '!=', null);
             });
         }
 

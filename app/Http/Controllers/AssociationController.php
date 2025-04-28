@@ -30,22 +30,21 @@ class AssociationController extends Controller
         $dptSmall = $request->request->get('_dptSelectSmall');
         $name = $request->request->get('_shelterNom');
 
-        if ($request->has($name)) {
+        if ($name) {
             $request->validate([
                 '_shelterNom' => 'string',
             ]);
             $query->where('nom', 'LIKE' , "%$name%");
         };
 
-        if ($request->has($dptSmall))  {
+        if ($dptSmall)  {
             $query->where('code_postal', 'LIKE', "$dptSmall%");
         };
 
-        if ($request->has($dptFull))  {
+        if ($dptFull)  {
             $query->where('code_postal', 'LIKE', "$dptFull%");
         };
 
-        //! Returns only the first result for now
         if ($request->has('_espece') && count($species) > 0) {
             $query->whereHas('pensionnaires', function($q) use ($species) {
                 $q->whereIn('espece_id', $species);
