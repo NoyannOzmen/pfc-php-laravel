@@ -27,12 +27,7 @@ class AnimalController extends Controller
      */
     public function getSearched(Request $request): View
     {
-        $query = Animal::where('statut', 'En refuge')->with('tags');
-
-        $request->validate([
-            'minAge' => 'integer',
-            'maxAge' => 'integer'
-        ]);
+        $query = Animal::where('statut', '=', "En refuge");
 
         $speciesFull = $request->request->get('_especeDropdownFull');
         $speciesSmall = $request->request->get('_especeDropdownSmall');
@@ -55,10 +50,16 @@ class AnimalController extends Controller
         };
 
         if ($request->has('_minAge') && !(empty($minAge))) {
+            $request->validate([
+                'minAge' => 'integer'
+            ]);
             $query->where('age', '>', "$minAge");
         };
 
-        if ($request->has('_maxAge') && !(empty($minAge))) {
+        if ($request->has('_maxAge') && !(empty($maxAge))) {
+            $request->validate([
+                'maxAge' => 'integer'
+            ]);
             $query->where('age', '<', "$maxAge");
         };
 
@@ -68,17 +69,22 @@ class AnimalController extends Controller
             });
         };
 
-        //! Returns only the first result for now
+        /**
+         * If user has selected tags to exclude, returns :
+         *
+         * 1. All animals without tags
+         * 2. Animals WITH tags whose names were not selected
+         *
+         */
         if ($request->has('_tags') && count($tags) > 0) {
-            $query->whereHas('tags', function($q) use ($tags) {
-                $q->whereNotIn('nom', $tags)->orWhere('nom', '!=', null);
+            $query->whereDoesntHave('tags', function($q) use ($tags) {
+                $q->whereIn('nom', $tags);
             });
-        }
+        };
 
         $searchedAnimals = $query->get();
-        $qr = $query->toSql();
 
-        return view('animaux/animalSearchResults', ['searchedAnimals' => $searchedAnimals, 'qr' => $qr, 'tags' => $tags]);
+        return view('animaux/animalSearchResults', ['searchedAnimals' => $searchedAnimals, 'tags' => $tags]);
     }
 
 
