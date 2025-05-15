@@ -97,7 +97,7 @@
 	</section>
 
 	<section class="p-4 py-6 block">
-		<h2 class="font-grands text-3xl text-center my-2">Ils vous attendent de patte ferme !</h2>
+		<h2 class="font-grands text-3xl text-center my-2">Eux aussi vous attendent chez {{ $animal->refuge->nom }} !</h2>
 
 		<section id="animal-carousel" class="md:flex md:flex-row relative mx-auto h-auto w-[90%] bg-zoning rounded-lg shadow dark:bg-gray-800">
 

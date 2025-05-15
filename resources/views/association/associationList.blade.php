@@ -54,8 +54,8 @@
   <div class="flex flex-wrap content-center justify-around my-8">
     <section class="mx-auto w-[80%]">
       <h2 class="font-grands text-3xl text-center my-2">Nos partenaires</h2>
-      <p class="mx-auto text-l font-body text-center">Pet Foster Connect a l'honneur de travailler main dans la main avec des refuges et associations de protection animale sur tout le territoire Français.
-        <br>Retrouvez-les ci-dessous. Vous pouvez également faire une recherche pour trouver les plus proches de chez vous !
+      <p class="mx-auto text-l font-body text-center">Pet Foster Connect a l'honneur de travailler main dans la main avec des refuges et associations de protection animale sur tout le territoire Français.<br>Retrouvez-les ci-dessous.
+        <br><br>Vous pouvez également effectuer une recherche pour trouver les plus proches de chez vous !
       </p>
     </section>
   </div>

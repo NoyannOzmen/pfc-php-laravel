@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 
 //* Static Pages
 Route::get('/', function () {
-    return view('staticPages/accueil', ['animals' => Animal::all()]);
+    return view('staticPages/accueil', ['animals' => Animal::where('statut', 'En refuge')->get()]);
 });
 Route::view('/a-propos', 'staticPages/aPropos');
 Route::view('/contact', 'staticPages/contact');

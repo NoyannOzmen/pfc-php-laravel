@@ -53,14 +53,14 @@ class AnimalController extends Controller
             $request->validate([
                 'minAge' => 'integer'
             ]);
-            $query->where('age', '>', "$minAge");
+            $query->where('age', '>=', "$minAge");
         };
 
         if ($request->has('_maxAge') && !(empty($maxAge))) {
             $request->validate([
                 'maxAge' => 'integer'
             ]);
-            $query->where('age', '<', "$maxAge");
+            $query->where('age', '<=', "$maxAge");
         };
 
         if ($request->has('_dptSelect'))  {
