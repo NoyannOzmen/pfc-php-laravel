@@ -17,5 +17,10 @@
         "postcss": "^8.4.31",
         "tailwindcss": "^4.3.3",
         "vite": "^6.2.4"
+    },
+    "overrides": {
+        "axios" : {
+            "follow-redirects": ">=1.16.1"
+        }
     }
 }
